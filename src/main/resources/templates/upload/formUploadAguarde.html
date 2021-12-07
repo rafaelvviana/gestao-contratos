@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="~{base :: head}"></head>
+
+<body>
+
+	<div th:replace="~{base :: menu}"></div>
+
+	<div class="container">
+		<div class="card shadow mb-4">
+			<div class="card-header py-3 cabecalho-azul">
+				<h6 class="mb-0">Atualizar Operações</h6>
+			</div>
+
+			<div class="card-body">
+				<form action="/upload" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+						<p th:text="${mensagem}">Atualização em andamento!</p>
+					</div>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<footer th:replace="~{base :: scripts}"></footer>
+
+</body>
+
+<footer th:replace="~{base :: footer}"></footer>
+</html>

@@ -1,0 +1,110 @@
+<head th:fragment="head">
+	<title>Gestão de Contratos</title>
+	<meta charset="UTF-8">	
+	<link
+		href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+		rel="stylesheet"
+		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+		crossorigin="anonymous">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Handlee&display=swap"
+		rel="stylesheet">
+	<link
+		href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+		rel="stylesheet">
+		
+	<style>
+		.fundo-azul {
+			background-color: #47bcff;
+			color: #FFF;
+		}
+		
+		.cabecalho-azul {
+			background-color: #3FBFBF;
+		}
+		
+		.logo-font {
+			font-family: 'Handlee', cursive;			
+		}
+		.logo-size {
+			font-size: 1.5rem;
+		}
+		.footer-container {
+			background-color: gray;
+			color: #FFF;
+		}
+		footer {
+		    text-align: center;
+		    padding: 40px 0;
+		}
+		
+	</style>
+</head>
+
+<div th:fragment="menu">
+	<div class="d-flex bd-highlight mb-3 fundo-azul">
+		<div class="p-2 bd-highlight">
+			<button class="btn btn-primary" type="button"
+				data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBackdrop"
+				aria-controls="offcanvasWithBackdrop">
+				<i class="bi bi-list"></i>
+			</button>
+		</div>
+		<div class="p-2 bd-highlight">
+			<span class="logo-font logo-size">gestão de Contratos </span>
+		</div>
+		<div class="p-2 bd-highlight">
+			<select class="logo-font form-select" aria-label="Default select example">
+			  <option selected>Escolha uma Unidade:</option>
+			  <option value="1">REGOVI-BI</option>
+			  <option value="2">GIGOV-GO</option>
+			  <option value="3">Three</option>
+			</select>
+		</div>
+		<div class="ms-auto p-2 bd-highlight mt-2">
+			<span class="p-2">login</span>
+		</div>
+	</div>
+	
+	<div class="offcanvas offcanvas-start" 
+		tabindex="-1"
+		id="offcanvasWithBackdrop"
+		aria-labelledby="offcanvasWithBackdropLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasWithBackdropLabel">Menu</h5>
+			<button type="button" class="btn-close text-reset"
+				data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body">
+			<div>
+			</div>
+			<div class="list-group">
+			  <span class="list-group-item list-group-item-action active" aria-current="true">Listar Contratos</span>
+			  <a href="#" class="list-group-item list-group-item-action">Todos</a>
+			  <a href="#" class="list-group-item list-group-item-action">Por unidade</a>
+			  <a href="#" class="list-group-item list-group-item-action">Por Tomador</a>
+			</div>
+			
+			<br/>
+			
+			<div class="list-group">
+			  <span class="list-group-item list-group-item-action active" aria-current="true">Ações</span>
+			  <a href="/upload/form" class="list-group-item list-group-item-action">Enviar atualização</a>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<span th:fragment="scripts">
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+		crossorigin="anonymous"></script>
+</span>
+
+<footer th:fragment="footer">
+	<div class="footer-container">
+	<p class="copyright">&copy;gestão de Contratos - 2021</p>
+	</div>
+</footer>
