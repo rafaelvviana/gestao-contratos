@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="~{base :: head}"></head>
+
+<body>
+
+	<div th:replace="~{base :: menu}"></div>
+
+	<div class="container">
+		<div class="card shadow mb-4">
+			<div class="card-header py-3 cabecalho-azul">
+				<h6 class="mb-0">Atualizar Operações</h6>
+			</div>
+
+			<div class="card-body">
+				<form action="/upload" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+						<p>Atenção! O arquivo deve estar no formato "*.xlsx" (Excel
+							2003 ou acima).</p>
+						<input class="btn" name="arquivo" type="file">
+					</div>
+					<hr />
+					<div class="form-group">
+						<p>Escolha a opção correspondente ao tipo do arquivo
+							selecionado. A escolha de um tipo não compatível impossibilita a
+							importação.</p>
+					</div>
+					<div class="form-group">
+						<div class="custom-control custom-radio">
+							<input type="radio" id="customRadio1" name="tipoImportacao"
+								class="custom-control-input" value="1" checked> <label
+								class="custom-control-label" for="customRadio1">OGU</label>
+						</div>
+
+						<div class="custom-control custom-radio">
+							<input type="radio" id="customRadio2" name="tipoImportacao"
+								class="custom-control-input" value="2"> <label
+								class="custom-control-label" for="customRadio2">Saldo de
+								Contas</label>
+						</div>
+
+						<div class="custom-control custom-radio">
+							<input type="radio" id="customRadio3" name="tipoImportacao"
+								class="custom-control-input" value="3"> <label
+								class="custom-control-label" for="customRadio3">Contas
+								Pendentes</label>
+						</div>
+
+						<div class="custom-control custom-radio">
+							<input type="radio" id="customRadio4" name="tipoImportacao"
+								class="custom-control-input" value="4"> <label
+								class="custom-control-label" for="customRadio4">Demandas</label>
+						</div>
+						<br />
+						<button class="btn btn-primary" type="submit">Enviar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<footer th:replace="~{base :: scripts}"></footer>
+
+</body>
+
+<footer th:replace="~{base :: footer}"></footer>
+</html>
