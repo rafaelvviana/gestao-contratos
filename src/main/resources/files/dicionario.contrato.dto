@@ -1,0 +1,125 @@
+Qtd,id
+Operacional,operacional
+Op. Atual,operacionalAtual
+Equipe Op.,operacionalEquipe
+Engenharia,engenheiro
+Eng. Atual,engenheiroAtual
+Equipe Eng.,engenheiroEquipe
+Social,social
+Soc. Atual,socialAtual
+Equipe Soc.,socialEquipe
+R. Caixa,representanteCaixa
+R. Caixa Atual,representanteCaixaAtual
+Operação,numeroOperacao
+Dv,dvOperacao
+SICONV,numeroSiconv
+Prop. SICONV,numeroPropostaSiconv
+Nome Tomador,tomadorNome
+CNPJ Tomador,tomadorCnpj
+Nome Agente Promotor,agentePromotorNome
+CNPJ Agente Promotor,agentePromotorCnpj
+Unidade,unidadeCaixa
+Programa,Programa
+Objetivo,objetivoPrograma
+Empreendimento,empreendimento
+Objeto,objetoEmpreendimento
+Localidade,localidadeEmpreendimento
+Logradouro,logradouroEmpreendimento
+Município,municipioEmpreendimento
+Seleção,dataSelecaoEmpreendimento
+Envio Mandatária,dataEnvioMandataria
+Assinatura,dataAssinatura
+Situação CAUC,situacaoCAUC
+Vigência,dataVigencia
+Situação CT,situacaoCT
+Estágio CT,estagioCT
+Situaçao Convenio SICONV,situacaoConvenioSICONV
+Dt. Public. DOU,dataPublicacaoDOU
+Venc Suspensiva,vencimentoSuspensiva
+Permite Adiantar Parcela,permiteAdiantarParcela
+Tipo Projeto,tipoProjeto
+Solicitou Liberar Parcela,SolicitouLiberarParcela
+Condicionante Liberar Parcela,CondicionanteLiberarParcela
+Descrição Condicionante,descricaoCondicionante
+Situação Projeto Básico/SPA,situacaoProjetoBasicoSPA
+Data Projeto Básico/SPA,dataProjetoBasicoSPA
+Data LAE,dataLAE
+Autor. SPA,dataAutorizacaoSPA
+Dias Corridos Sem VRPL,diasCorridosSemVRPL
+Data VRPL,dataVRPL
+Dt. Decl. Início Obra Tomador,dataDeclInícioObraTomador
+Autor. Obra,dataAutorizacaoObra
+Licit.,licitacao
+VI,vi
+VR,vr
+CP1,cp1
+CP2,cp2
+VR Empenhado,vrEmpenhado
+VR Creditado,vrCreditado
+VR Solicitado,vrSolicitado
+VR Necessidade Financeira,vrNecessidadeFinanceira
+VR Necessidade Informada,vrNecessidadeInformada
+VR Necessidade Aferida,vrNecessidadeAferida
+VR Desbloqueado,vrDesbloqueado
+VR Saldo Creditado,vrSaldoCreditado
+CP Creditada,cpCreditada
+CP Desbloqueado,cpDesbloqueado
+VI PTS Repasse,viPTSRepasse
+VI PTS Contrapartida,viPTSContrapartida
+VI PTS Desbloqueado,viPTSDesbloqueado
+VI QCI Vigente,viQCIVigente
+% VI Desbloqueado,percViDesbloqueado
+% VI QCI Desbloqueado,percViQCIDesbloqueado
+% Obra Informado,percObraInformado
+% Obra Executado,percObraExecutado
+Sit. Obra,situacaoObra
+% Obra Liberação,percObraLiberacao
+Saldo C. Corrente,saldoContaCorrente
+Saldo Poup. OBTV,saldoPoupancaOBTV
+Saldo Aplicação,saldoAplicacao
+Dt. Captura ,dataCapturaSaldoContaCorrente
+Hora Captura ,horaCapturaSaldoContaCorrente
+Saldo C. Poupança,saldoContaPoupança
+Dt. Captura ,dataCapturaSaldoContaPoupanca
+Hora Captura ,horaCapturaSaldoContaPoupanca
+Disponível Pgto Imediato,disponivelPagamenttoImediato
+Potencial Pgto Futuro,potencialPagamentoFuturo
+Primeiro Crédito,dataPrimeiroCredito
+Dias Corridos Prim. Crédito,diasCorridosPrimeiroCredito
+Último Crédito,dataUltimoCredito
+Última Vistoria,dataUltimaVistoria
+Último Desbloqueio,dataDeDesbloqueio
+Dias Corridos Último Desb.,diasCorridosUltimoDesbloqueio
+VR Último Desbloqueio,vrUltimoDesbloqueio
+R. Prest. Contas,rPrestacaoContas
+Sit. Prest. Contas,situacaoPrestacaoContas
+Aprov. Prest. Contas Caixa,dataAprovacaoPrestContasCaixa
+C. Agência,agencia
+Agência,nomeAgencia
+C. Corrente,contaCorrente
+C. Poupança,contaPoupança
+ID Externa,idExterna
+Portaria,portaria
+Simplificado,simplificado
+SR,sr
+OBTV,obtv
+Cliente,cliente
+Gestor,gestor
+Impositivo,impositivo
+Parlamentar,parlamentar
+Apelido Empreendimento,apelidoEmpreendimento
+Etiquetas da Operação,etiquetasDaOperacao
+Observação Empreendimento,observacaoEmpreendimento
+Última Data de Histórico,dataUltimoHistorico
+Último Histórico,ultimoHistorico
+Situação Atual,situacaoAtualDetalhada
+Dt Última Alteração,dataUltimaAlteracao
+Autor Alteração,autorAlteracao
+Dt último desbloqueio,dataUltimoDesbloqueio
+Dt última evolução obra,dataUltimaEvolucaoObra
+Dt último BM (Gestão PAC),dataUltimoBMGestaoPac
+Dt última evolução considerada,dataUltimaEvolucaoConsiderada
+Dias sem evolução,diasSemEvolução
+Dias restantes paralisação,diasRestantesParalisacao
+Paralisadas - Necessita Atuação (possui ações vencidas),paralisadas
+Protocolos/Demandas Ativas,protocolosDemandasAtivas

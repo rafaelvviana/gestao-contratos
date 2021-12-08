@@ -25,7 +25,7 @@ public class UploadController {
 	private ReadAndUpdateService readAndUpdateService;
 	
 	@PostMapping
-	public String upload(@RequestParam MultipartFile arquivo, Model model) throws IOException {
+	public String upload(@RequestParam MultipartFile arquivo, Model model) throws IOException, IllegalArgumentException, IllegalAccessException {
 		String nomeArquivoUpload = storage.salvarArquivo(arquivo);
 		
 		System.out.println(nomeArquivoUpload);
