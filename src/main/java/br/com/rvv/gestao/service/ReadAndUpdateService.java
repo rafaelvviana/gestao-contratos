@@ -33,8 +33,8 @@ public class ReadAndUpdateService {
 
 	@Autowired
 	private ContratoRepository contratoRepository;
-	
-	private List<ContratoImportadoDto> lista = new ArrayList<>();
+
+	private List<ContratoImportadoDto> listaDeRegistrosLidos = new ArrayList<>();
 
 	private HashMap<String, Integer> mapCamposContratoDtoDeParaIndex;
 	private HashMap<String, String> mapCamposPlanilhaDeParaContratoDto;
@@ -45,38 +45,70 @@ public class ReadAndUpdateService {
 		mapCamposPlanilhaDeParaContratoDto = getCamposPlanilhaDeParaContratoDto();
 	}
 
-	private Sheet getSheetFromFile(FileInputStream arquivo, Integer numSheet) throws IOException {
-		@SuppressWarnings("resource")
-		Workbook workbook = new XSSFWorkbook(arquivo);
-		return workbook.getSheetAt(0);
-	}
-
 	@Async
-	public void readFileAndUpdateDataBase(String nomeArquivoUpload) throws FileNotFoundException, IOException {
+	public void publishFile(String nomeArquivoUpload) throws IOException {
 
-		getSheetFromFile(new FileInputStream(new File(nomeArquivoUpload)), 0).forEach(row -> {
-			if (row.getRowNum() == 0) {
-				row.forEach(celula -> mapCamposPlanilhaDeParaIndex.put(mapCamposPlanilhaDeParaIndex.size(),
-						getCellValue(celula).toString().replace(" ", "")));
-			} else 
-			if (row.getRowNum() > 1) {
-				lista.add((ContratoImportadoDto) getRegistroFromRow(row, new ContratoImportadoDto()));				
-			}
-		});
-
-		lista.forEach(contratoLido -> {
-			Contrato contrato = new Contrato();
-			contrato.setNumeroOperacao(Integer.parseInt(contratoLido.numeroOperacao));
-			contrato.setNumeroSiconv(Integer.parseInt(contratoLido.numeroSiconv));				
-			contratoRepository.save(contrato);
+		try {
+			File localFile = new File(nomeArquivoUpload);
 			
-			System.out.println("Linha >> " + contratoLido.toString());
-		});
+			getSheetFromFile(new FileInputStream(localFile), 0).forEach(row -> {				
+				getFileHeader(row);
+				getRecordsFromFile(row);
+			});
 
+			saveRecords();
+			
+			localFile.delete();
+			
+			/** 
+			 * TODO
+			 * PONTO DE ATENÇAO
+			 */
+			
+		} catch (IOException error) {
+			throw new IOException("Erro ao ler o arquivo." + error.getMessage());
+		}
+		
+		/**
+		 * TODO 
+		 * implement a return promise
+		 */
 		System.out.println("Atualização finalizada com sucesso!");
 	}
-	
-	private RegistroImportadoDto getRegistroFromRow(Row row, RegistroImportadoDto registroImportado) {		
+
+	private void getFileHeader(Row row) {
+		if (row.getRowNum() == 0) {
+			row.forEach(celula -> mapCamposPlanilhaDeParaIndex.put(mapCamposPlanilhaDeParaIndex.size(),
+					getCellValue(celula).toString().replace(" ", "")));
+		}
+	}
+
+	private void getRecordsFromFile(Row row) {
+		if (row.getRowNum() > 1) {
+			listaDeRegistrosLidos.add((ContratoImportadoDto) getRegistroFromRow(row, new ContratoImportadoDto()));
+		}
+	}
+
+	private void saveRecords() {
+		listaDeRegistrosLidos.forEach(contratoLido -> {
+			Contrato contrato = new Contrato();
+			contrato.setNumeroOperacao(Integer.parseInt(contratoLido.numeroOperacao));
+			contrato.setNumeroSiconv(Integer.parseInt(contratoLido.numeroSiconv));
+			contratoRepository.save(contrato);
+		});
+	}
+
+	private Sheet getSheetFromFile(FileInputStream arquivo, Integer numSheet) throws IOException {
+		try {
+			@SuppressWarnings("resource")
+			Workbook workbook = new XSSFWorkbook(arquivo);
+			return workbook.getSheetAt(0);
+		} catch (Exception e) {
+			throw new IOException("Arquivo fora do formato esperado.");
+		}
+	}
+
+	private RegistroImportadoDto getRegistroFromRow(Row row, RegistroImportadoDto registroImportado) {
 		Field[] fields = registroImportado.getClass().getDeclaredFields();
 		row.forEach(celula -> {
 			try {
@@ -94,16 +126,8 @@ public class ReadAndUpdateService {
 
 	private Integer getIdCampoContratoDto(int i) {
 		try {
-			String campoDaPlanilha = mapCamposPlanilhaDeParaIndex.get(i);
-			if (campoDaPlanilha == null) {
-				return null;
-			}
-			String nomeCampoDoBanco = mapCamposPlanilhaDeParaContratoDto.get(campoDaPlanilha);
-			if (nomeCampoDoBanco == null) {
-				return null;
-			}
-			int idCampoNoBanco = mapCamposContratoDtoDeParaIndex.get(nomeCampoDoBanco);
-			return idCampoNoBanco;
+			return mapCamposContratoDtoDeParaIndex
+					.get(mapCamposPlanilhaDeParaContratoDto.get(mapCamposPlanilhaDeParaIndex.get(i)));
 		} catch (Exception e) {
 			return null;
 		}

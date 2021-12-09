@@ -1,5 +1,6 @@
 package br.com.rvv.gestao.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +26,19 @@ public class UploadController {
 	private ReadAndUpdateService readAndUpdateService;
 	
 	@PostMapping
-	public String upload(@RequestParam MultipartFile arquivo, Model model) throws IOException, IllegalArgumentException, IllegalAccessException {
-		String nomeArquivoUpload = storage.salvarArquivo(arquivo);
+	public String upload(@RequestParam MultipartFile arquivo, Model model) {
 		
-		System.out.println(nomeArquivoUpload);
 		String mensagemArquivoUpload;
-		if(nomeArquivoUpload == null) {
-			mensagemArquivoUpload = "Erro ao fazer envio do arquivo";
-		} else { 
-			readAndUpdateService.readFileAndUpdateDataBase(nomeArquivoUpload);
+		
+		try {
+			readAndUpdateService.publishFile(storage.saveFile(arquivo));
 			mensagemArquivoUpload = "Arquivo enviado com sucesso. Atualização em andamento!";
+		} catch (Exception e) {
+			mensagemArquivoUpload = e.getMessage();
 		}
 		
 		model.addAttribute("mensagem", mensagemArquivoUpload);
-		return "upload/formUploadAguarde";
+		return "upload/formUploadAguarde"; 
 	}
 
 	@GetMapping("form")
