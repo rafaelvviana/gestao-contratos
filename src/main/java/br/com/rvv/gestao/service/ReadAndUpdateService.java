@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,18 +21,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import br.com.rvv.gestao.controller.dto.ContratoImportadoDto;
+import br.com.rvv.gestao.controller.dto.ContratoLidoDto;
 import br.com.rvv.gestao.controller.dto.RegistroImportadoDto;
-import br.com.rvv.gestao.model.Contrato;
-import br.com.rvv.gestao.repository.ContratoRepository;
 
 @Service
 public class ReadAndUpdateService {
-
+	
 	@Autowired
-	private ContratoRepository contratoRepository;
-
-	private List<ContratoImportadoDto> listaDeRegistrosLidos = new ArrayList<>();
+	private ContratoService contratoService;
 
 	private HashMap<String, Integer> mapCamposContratoDtoDeParaIndex;
 	private HashMap<String, String> mapCamposPlanilhaDeParaContratoDto;
@@ -46,56 +40,45 @@ public class ReadAndUpdateService {
 	}
 
 	@Async
-	public void publishFile(String nomeArquivoUpload) throws IOException {
+	public void publishFile(String nomeArquivoUpload) throws Exception {
 
 		try {
 			File localFile = new File(nomeArquivoUpload);
-			
-			getSheetFromFile(new FileInputStream(localFile), 0).forEach(row -> {				
-				getFileHeader(row);
-				getRecordsFromFile(row);
+
+			getSheetFromFile(new FileInputStream(localFile), 0).forEach(row -> {
+				if (row.getRowNum() == 0) {
+					getFileHeader(row);
+				} else 
+				if (row.getRowNum() > 1) {				
+					contratoService.saveContrato(getRecordsFromFile(row));
+				}
 			});
 
-			saveRecords();
-			
 			localFile.delete();
-			
-			/** 
-			 * TODO
-			 * PONTO DE ATENÇAO
+
+			/**
+			 * TODO PONTO DE ATENÇAO
 			 */
-			
+
 		} catch (IOException error) {
 			throw new IOException("Erro ao ler o arquivo." + error.getMessage());
+		} catch (Exception error) {
+			throw new Exception("Erro ao gravar no banco." + error.getMessage());
 		}
-		
+
 		/**
-		 * TODO 
-		 * implement a return promise
+		 * TODO implement a return promise
 		 */
 		System.out.println("Atualização finalizada com sucesso!");
 	}
 
-	private void getFileHeader(Row row) {
-		if (row.getRowNum() == 0) {
-			row.forEach(celula -> mapCamposPlanilhaDeParaIndex.put(mapCamposPlanilhaDeParaIndex.size(),
-					getCellValue(celula).toString().replace(" ", "")));
-		}
+	private void getFileHeader(Row row) {		
+		row.forEach(celula -> mapCamposPlanilhaDeParaIndex.put(mapCamposPlanilhaDeParaIndex.size(),
+				getCellValue(celula).toString().replace(" ", "")));	
 	}
 
-	private void getRecordsFromFile(Row row) {
-		if (row.getRowNum() > 1) {
-			listaDeRegistrosLidos.add((ContratoImportadoDto) getRegistroFromRow(row, new ContratoImportadoDto()));
-		}
-	}
-
-	private void saveRecords() {
-		listaDeRegistrosLidos.forEach(contratoLido -> {
-			Contrato contrato = new Contrato();
-			contrato.setNumeroOperacao(Integer.parseInt(contratoLido.numeroOperacao));
-			contrato.setNumeroSiconv(Integer.parseInt(contratoLido.numeroSiconv));
-			contratoRepository.save(contrato);
-		});
+	private ContratoLidoDto getRecordsFromFile(Row row) {
+		return (ContratoLidoDto) getRegistroFromRow(row, new ContratoLidoDto());		
 	}
 
 	private Sheet getSheetFromFile(FileInputStream arquivo, Integer numSheet) throws IOException {
@@ -135,7 +118,7 @@ public class ReadAndUpdateService {
 
 	private HashMap<String, Integer> getCamposContratoDtoDeParaIndex() {
 		HashMap<String, Integer> listaCamposContratoDtoDeParaIndex = new HashMap<String, Integer>();
-		Field[] campos = ContratoImportadoDto.class.getFields();
+		Field[] campos = ContratoLidoDto.class.getFields();
 		for (Field field : campos) {
 			listaCamposContratoDtoDeParaIndex.put(field.getName(), listaCamposContratoDtoDeParaIndex.size());
 		}
@@ -169,7 +152,7 @@ public class ReadAndUpdateService {
 			if (DateUtil.isCellDateFormatted(celula)) {
 				cellValue = celula.getDateCellValue();
 			} else {
-				celula.setCellType(cellType.STRING);
+				celula.setCellType(CellType.STRING);
 				cellValue = celula.getStringCellValue();
 			}
 		} else if (cellType == CellType.BOOLEAN) {

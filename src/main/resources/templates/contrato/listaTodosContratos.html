@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head th:replace="~{base :: head}"></head>
+	
+<body onLoad="onLoad()">
+	
+	<div th:replace="~{base :: menu}"></div>
+	
+	<div >
+		<h1>Todos as Operações</h1>
+		
+		<div id="listaContratos">
+		
+			<table class="ml-2 mr-2 table table-striped table-hover">
+				<tbody>
+					<tr class="table-info">		
+						<th>Operação</th>						
+						<th>Siconv</th>
+						<th>Tomador</th>
+						<th>Programa</th>
+						<th>Objeto</th>
+					</tr>
+					<tr v-for="contrato in contratos">
+						<td>{{contrato.numeroOperacao}}-{{contrato.dvOperacao}}</td>
+						<td>{{contrato.numeroSiconv}}</td>						
+						<td>{{contrato.tomadorOperacao.nome}}</td>
+						<td>{{contrato.empreendimento.programa.nome}}</td>
+						<td>{{contrato.empreendimento.objeto}}</td>
+					</tr>
+				</tbody>				
+				  
+			</table>
+			
+		
+		</div>
+		
+	</div>
+
+	
+	<div th:replace="~{base :: scripts}"></div>
+
+	<script>
+		function onLoad(){
+			var app = new Vue({
+				el: '#listaContratos',
+				data: {
+					contratos: []
+				},
+				mounted() {
+					axios
+						.get('http://localhost:8080/contratos')
+						.then(response => {
+							this.contratos = response.data
+						})
+				}
+			})
+		}
+	
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	
+</body>
+
+<footer th:replace="~{base :: footer}"></footer>
+
+</html>

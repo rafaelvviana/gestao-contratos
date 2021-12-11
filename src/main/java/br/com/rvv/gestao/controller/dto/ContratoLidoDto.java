@@ -1,6 +1,6 @@
 package br.com.rvv.gestao.controller.dto;
 
-public class ContratoImportadoDto implements RegistroImportadoDto {
+public class ContratoLidoDto implements RegistroImportadoDto {
 	
 	public String id;
 	
@@ -27,7 +27,7 @@ public class ContratoImportadoDto implements RegistroImportadoDto {
 	public String agentePromotorCnpj;
 			
 	public String unidadeCaixa;
-	public String Programa;
+	public String programa;
 	public String objetivoPrograma;
 	public String empreendimento;
 	public String objetoEmpreendimento;
@@ -47,7 +47,7 @@ public class ContratoImportadoDto implements RegistroImportadoDto {
 	public String permiteAdiantarParcela;
 	public String tipoProjeto;
 	public String SolicitouLiberarParcela;
-	public String CondicionanteLiberarParcela;
+	public String condicionanteLiberarParcela;
 	public String descricaoCondicionante;
 	public String situacaoProjetoBasicoSPA;
 	public String dataProjetoBasicoSPA;
@@ -89,10 +89,10 @@ public class ContratoImportadoDto implements RegistroImportadoDto {
 	public String saldoAplicacao;
 	public String dataCapturaSaldoContaCorrente;
 	public String horaCapturaSaldoContaCorrente;
-	public String saldoContaPoupança;
+	public String saldoContaPoupanca;
 	public String dataCapturaSaldoContaPoupanca;
 	public String horaCapturaSaldoContaPoupanca;
-	public String disponivelPagamenttoImediato;
+	public String disponivelPagamentoImediato;
 	public String potencialPagamentoFuturo;
 	public String dataPrimeiroCredito;
 	public String diasCorridosPrimeiroCredito;
