@@ -55,7 +55,13 @@
 		<div class="p-2 bd-highlight">
 			<a class="logo-font logo-size" href="/">gestão de Contratos</a>
 		</div>
-		
+		<div class="p-2 bd-highlight">
+			
+			<select class="logo-font form-select">
+			    <option th:each="unidade : ${unidades}" th:value="${unidade.id}" th:text="${unidade.nome}">
+			    </option>
+			</select>
+		</div>
 		<div class="ms-auto p-2 bd-highlight mt-2">
 			<span class="p-2">login</span>
 		</div>

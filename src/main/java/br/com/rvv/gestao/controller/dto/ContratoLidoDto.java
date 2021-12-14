@@ -108,7 +108,7 @@ public class ContratoLidoDto implements RegistroImportadoDto {
 	public String agencia;
 	public String nomeAgencia;
 	public String contaCorrente;
-	public String contaPoupança;
+	public String contaPoupanca;
 	
 	public String idExterna;
 	public String portaria;

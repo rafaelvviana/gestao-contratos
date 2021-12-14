@@ -16,6 +16,13 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ConverterHelper {
 
+	public static Integer integer(String pInteger) {
+		if((pInteger == null) || (pInteger == "")) {
+			pInteger = "0";
+		}
+		return Integer.parseInt(pInteger);
+	}
+	
 	public static BigDecimal bigDecimal(String pValorBigDecimal) {		
 		if ((pValorBigDecimal == "") || (pValorBigDecimal == "0.0") || pValorBigDecimal == null) {
 			pValorBigDecimal = "0";

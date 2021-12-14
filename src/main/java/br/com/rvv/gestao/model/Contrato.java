@@ -3,6 +3,7 @@ package br.com.rvv.gestao.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,95 +20,156 @@ public class Contrato {
 	private int dvOperacao;
 	private long numeroSiconv;
 	private long numeroPropostaSiconv;
-	protected String tipoProjeto;
+	private String tipoProjeto;
 	
-	protected String situacaoCAUC;
-	protected String situacaoCT;
-	protected String estagioCT;
-	protected String situacaoConvenioSICONV;	
-	protected String permiteAdiantarParcela;	
-	protected String SolicitouLiberarParcela;
-	protected String CondicionanteLiberarParcela;
-	protected String descricaoCondicionante;
-	protected String situacaoProjetoBasicoSPA;
+	private String situacaoCAUC;
+	private String situacaoCT;
+	private String estagioCT;
+	private String situacaoConvenioSICONV;	
+	private String permiteAdiantarParcela;	
+	private String solicitouLiberarParcela;
+	private String condicionanteLiberarParcela;
+	private String descricaoCondicionante;
+	private String situacaoProjetoBasicoSPA;
 	
-	protected long diasCorridosSemVRPL;
-	protected String licitacao;
+	private long diasCorridosSemVRPL;
+	private String licitacao;
 		
-	protected BigDecimal vi;
-	protected BigDecimal vr;
-	protected BigDecimal cp1;
-	protected BigDecimal cp2;
-	protected BigDecimal vrEmpenhado;
-	protected BigDecimal vrCreditado;
-	protected BigDecimal vrSolicitado;
-	protected BigDecimal vrNecessidadeFinanceira;
-	protected BigDecimal vrDesbloqueado;
-	protected BigDecimal vrSaldoCreditado;
-	protected BigDecimal cpCreditada;
-	protected BigDecimal cpDesbloqueado;
-	protected BigDecimal viPTSRepasse;
-	protected BigDecimal viPTSContrapartida;
-	protected BigDecimal viPTSDesbloqueado;
-	protected BigDecimal viQCIVigente;
-	protected BigDecimal percViDesbloqueado;
-	protected BigDecimal percViQCIDesbloqueado;
-	protected BigDecimal percObraInformado;
-	protected BigDecimal percObraExecutado;	
-	protected BigDecimal percObraLiberacao;
-	protected String situacaoObra;
+	private BigDecimal vi;
+	private BigDecimal vr;
+	private BigDecimal cp1;
+	private BigDecimal cp2;
+	private BigDecimal vrEmpenhado;
+	private BigDecimal vrCreditado;
+	private BigDecimal vrSolicitado;
+	private BigDecimal vrNecessidadeFinanceira;
+	private BigDecimal vrDesbloqueado;
+	private BigDecimal vrSaldoCreditado;
+	private BigDecimal cpCreditada;
+	private BigDecimal cpDesbloqueado;
+	private BigDecimal viPTSRepasse;
+	private BigDecimal viPTSContrapartida;
+	private BigDecimal viPTSDesbloqueado;
+	private BigDecimal viQCIVigente;
+	private BigDecimal percViDesbloqueado;
+	private BigDecimal percViQCIDesbloqueado;
+	private BigDecimal percObraInformado;
+	private BigDecimal percObraExecutado;	
+	private BigDecimal percObraLiberacao;
+	private String situacaoObra;
 	
-	protected BigDecimal saldoContaCorrente;
-	protected BigDecimal saldoAplicacao;
-	protected BigDecimal saldoContaPoupanca;
-	protected BigDecimal saldoGeral;
+	private BigDecimal saldoContaCorrente;
+	private BigDecimal saldoAplicacao;
+	private BigDecimal saldoContaPoupanca;
+	private BigDecimal saldoGeral;
 		
-	protected BigDecimal disponivelPagamentoImediato;
-	protected BigDecimal potencialPagamentoFuturo;
-	protected LocalDate dataPrimeiroCredito;
-	protected long diasCorridosPrimeiroCredito;
-	protected long diasCorridosUltimoDesbloqueio;
-	protected BigDecimal vrUltimoDesbloqueio;
-	protected String situacaoPrestacaoContas;
+	private BigDecimal disponivelPagamentoImediato;
+	private BigDecimal potencialPagamentoFuturo;
+	private LocalDate dataPrimeiroCredito;
+	private long diasCorridosPrimeiroCredito;
+	private long diasCorridosUltimoDesbloqueio;
+	private BigDecimal vrUltimoDesbloqueio;
+	private String situacaoPrestacaoContas;
+	
+	private String agencia;
+	private String nomeAgencia;
+	private String contaCorrente;
+	private String contaPoupanca;
+	private String idExterna;
+	private String portaria;
+	private String simplificado;
+	private String sr;
+	private String obtv;
+	private String cliente;
+	private String gestor;
+	private String impositivo;
+	private String parlamentar;
+	
+	@Column(length = 1000)
+	private String etiquetasDaOperacao;
+	
+	@Column(length = 1000)
+	private String ultimoHistorico;
+	@Column(length = 1200)
+	private String situacaoAtualDetalhada;
+	private String autorAlteracao;
+	private String paralisadas;
+
+	private LocalDate rPrestacaoContas;
+	private LocalDate dataAssinatura;
+	private LocalDate dataVigencia;
+	
+	private LocalDate dataEnvioMandataria;
+	private LocalDate dataPublicacaoDOU;
+	private LocalDate vencimentoSuspensiva;
+	private LocalDate dataProjetoBasicoSPA;
+	private LocalDate dataLAE;
+	private LocalDate dataAutorizacaoSPA;
+	private LocalDate dataVRPL;
+	private LocalDate dataDeclInícioObraTomador;
+	private LocalDate dataAutorizacaoObra;
+	private LocalDate dataUltimoCredito;
+	private LocalDate dataUltimaVistoria;
+	private LocalDate dataDeDesbloqueio;
+	private LocalDate dataAprovacaoPrestContasCaixa;
+	private LocalDate dataUltimoHistorico;
+	private LocalDate dataUltimaAlteracao;
+	private LocalDate dataAio;
+	private LocalDate dataEntrada;
+	private LocalDate dataEncaminhamento;
+	
+	private BigDecimal saldoPendente;
+
+	private Boolean pendente;
+
+	private String prot;
+
+	private String responsavelEncaminhamento;
+	private String situacaoTotal;
+	private String tipoDemanda;
+	private String subTipoDemanda;
+	private int prazoTotal;
+	private int diasRestantesParalisacao;
+	
 	
 	@ManyToOne
-	protected UnidadeCaixa unidadeCaixa;
+	private UnidadeCaixa unidadeCaixa;
 	
 	@ManyToOne
-	protected Empreendimento empreendimento;
+	private Empreendimento empreendimento;
 	
 	@ManyToOne
-	protected FuncionarioCaixa operacional;
+	private FuncionarioCaixa operacional;
 	
 	@ManyToOne
-	protected FuncionarioCaixa operacionalAtual;
+	private FuncionarioCaixa operacionalAtual;
 	
 	@ManyToOne
-	protected FuncionarioCaixa engenheiro;
+	private FuncionarioCaixa engenheiro;
 	
 	@ManyToOne
-	protected FuncionarioCaixa engenheiroAtual;
+	private FuncionarioCaixa engenheiroAtual;
 
 	@ManyToOne
-	protected FuncionarioCaixa social;
+	private FuncionarioCaixa social;
 	
 	@ManyToOne
-	protected FuncionarioCaixa socialAtual;
+	private FuncionarioCaixa socialAtual;
 	
 	@ManyToOne
-	protected FuncionarioCaixa representanteCaixa;
+	private FuncionarioCaixa representanteCaixa;
 
 	@ManyToOne
-	protected FuncionarioCaixa representanteCaixaAtual;
+	private FuncionarioCaixa representanteCaixaAtual;
 		
 	@ManyToOne
-	protected Entidade tomadorOperacao;
+	private Entidade tomadorOperacao;
 	
 	@ManyToOne
-	protected Entidade tomadorPrincipal;
+	private Entidade tomadorPrincipal;
 	
 	@ManyToOne
-	protected Entidade agentePromotorOperacao;
+	private Entidade agentePromotorOperacao;
 	
 	public long getId() {
 		return id;
@@ -176,16 +238,16 @@ public class Contrato {
 		this.permiteAdiantarParcela = permiteAdiantarParcela;
 	}
 	public String getSolicitouLiberarParcela() {
-		return SolicitouLiberarParcela;
+		return solicitouLiberarParcela;
 	}
 	public void setSolicitouLiberarParcela(String solicitouLiberarParcela) {
-		SolicitouLiberarParcela = solicitouLiberarParcela;
+		this.solicitouLiberarParcela = solicitouLiberarParcela;
 	}
 	public String getCondicionanteLiberarParcela() {
-		return CondicionanteLiberarParcela;
+		return condicionanteLiberarParcela;
 	}
 	public void setCondicionanteLiberarParcela(String condicionanteLiberarParcela) {
-		CondicionanteLiberarParcela = condicionanteLiberarParcela;
+		this.condicionanteLiberarParcela = condicionanteLiberarParcela;
 	}
 	public String getDescricaoCondicionante() {
 		return descricaoCondicionante;
@@ -488,5 +550,294 @@ public class Contrato {
 	public void setAgentePromotorOperacao(Entidade agentePromotorOperacao) {
 		this.agentePromotorOperacao = agentePromotorOperacao;
 	}
+	public String getAgencia() {
+		return agencia;
+	}
+	public void setAgencia(String agencia) {
+		this.agencia = agencia;
+	}
+	public String getNomeAgencia() {
+		return nomeAgencia;
+	}
+	public void setNomeAgencia(String nomeAgencia) {
+		this.nomeAgencia = nomeAgencia;
+	}
+	public String getContaCorrente() {
+		return contaCorrente;
+	}
+	public void setContaCorrente(String contaCorrente) {
+		this.contaCorrente = contaCorrente;
+	}
+	public String getContaPoupanca() {
+		return contaPoupanca;
+	}
+	public void setContaPoupanca(String contaPoupanca) {
+		this.contaPoupanca = contaPoupanca;
+	}
+	public String getIdExterna() {
+		return idExterna;
+	}
+	public void setIdExterna(String idExterna) {
+		this.idExterna = idExterna;
+	}
+	public String getPortaria() {
+		return portaria;
+	}
+	public void setPortaria(String portaria) {
+		this.portaria = portaria;
+	}
+	public String getSimplificado() {
+		return simplificado;
+	}
+	public void setSimplificado(String simplificado) {
+		this.simplificado = simplificado;
+	}
+	public String getSr() {
+		return sr;
+	}
+	public void setSr(String sr) {
+		this.sr = sr;
+	}
+	public String getObtv() {
+		return obtv;
+	}
+	public void setObtv(String obtv) {
+		this.obtv = obtv;
+	}
+	public String getCliente() {
+		return cliente;
+	}
+	public void setCliente(String cliente) {
+		this.cliente = cliente;
+	}
+	public String getGestor() {
+		return gestor;
+	}
+	public void setGestor(String gestor) {
+		this.gestor = gestor;
+	}
+	public String getImpositivo() {
+		return impositivo;
+	}
+	public void setImpositivo(String impositivo) {
+		this.impositivo = impositivo;
+	}
+	public String getParlamentar() {
+		return parlamentar;
+	}
+	public void setParlamentar(String parlamentar) {
+		this.parlamentar = parlamentar;
+	}
+	public String getEtiquetasDaOperacao() {
+		return etiquetasDaOperacao;
+	}
+	public void setEtiquetasDaOperacao(String etiquetasDaOperacao) {
+		this.etiquetasDaOperacao = etiquetasDaOperacao;
+	}
+	public String getUltimoHistorico() {
+		return ultimoHistorico;
+	}
+	public void setUltimoHistorico(String ultimoHistorico) {
+		this.ultimoHistorico = ultimoHistorico;
+	}
+	public String getSituacaoAtualDetalhada() {
+		return situacaoAtualDetalhada;
+	}
+	public void setSituacaoAtualDetalhada(String situacaoAtualDetalhada) {
+		this.situacaoAtualDetalhada = situacaoAtualDetalhada;
+	}
+	public String getAutorAlteracao() {
+		return autorAlteracao;
+	}
+	public void setAutorAlteracao(String autorAlteracao) {
+		this.autorAlteracao = autorAlteracao;
+	}
+	public String getParalisadas() {
+		return paralisadas;
+	}
+	public void setParalisadas(String paralisadas) {
+		this.paralisadas = paralisadas;
+	}
+	public LocalDate getrPrestacaoContas() {
+		return rPrestacaoContas;
+	}
+	public void setrPrestacaoContas(LocalDate rPrestacaoContas) {
+		this.rPrestacaoContas = rPrestacaoContas;
+	}
+	public LocalDate getDataAssinatura() {
+		return dataAssinatura;
+	}
+	public void setDataAssinatura(LocalDate dataAssinatura) {
+		this.dataAssinatura = dataAssinatura;
+	}
+	public LocalDate getDataVigencia() {
+		return dataVigencia;
+	}
+	public void setDataVigencia(LocalDate dataVigencia) {
+		this.dataVigencia = dataVigencia;
+	}
+	public LocalDate getDataEnvioMandataria() {
+		return dataEnvioMandataria;
+	}
+	public void setDataEnvioMandataria(LocalDate dataEnvioMandataria) {
+		this.dataEnvioMandataria = dataEnvioMandataria;
+	}
+	public LocalDate getDataPublicacaoDOU() {
+		return dataPublicacaoDOU;
+	}
+	public void setDataPublicacaoDOU(LocalDate dataPublicacaoDOU) {
+		this.dataPublicacaoDOU = dataPublicacaoDOU;
+	}
+	public LocalDate getVencimentoSuspensiva() {
+		return vencimentoSuspensiva;
+	}
+	public void setVencimentoSuspensiva(LocalDate vencimentoSuspensiva) {
+		this.vencimentoSuspensiva = vencimentoSuspensiva;
+	}
+	public LocalDate getDataProjetoBasicoSPA() {
+		return dataProjetoBasicoSPA;
+	}
+	public void setDataProjetoBasicoSPA(LocalDate dataProjetoBasicoSPA) {
+		this.dataProjetoBasicoSPA = dataProjetoBasicoSPA;
+	}
+	public LocalDate getDataLAE() {
+		return dataLAE;
+	}
+	public void setDataLAE(LocalDate dataLAE) {
+		this.dataLAE = dataLAE;
+	}
+	public LocalDate getDataAutorizacaoSPA() {
+		return dataAutorizacaoSPA;
+	}
+	public void setDataAutorizacaoSPA(LocalDate dataAutorizacaoSPA) {
+		this.dataAutorizacaoSPA = dataAutorizacaoSPA;
+	}
+	public LocalDate getDataVRPL() {
+		return dataVRPL;
+	}
+	public void setDataVRPL(LocalDate dataVRPL) {
+		this.dataVRPL = dataVRPL;
+	}
+	public LocalDate getDataDeclInícioObraTomador() {
+		return dataDeclInícioObraTomador;
+	}
+	public void setDataDeclInícioObraTomador(LocalDate dataDeclInícioObraTomador) {
+		this.dataDeclInícioObraTomador = dataDeclInícioObraTomador;
+	}
+	public LocalDate getDataAutorizacaoObra() {
+		return dataAutorizacaoObra;
+	}
+	public void setDataAutorizacaoObra(LocalDate dataAutorizacaoObra) {
+		this.dataAutorizacaoObra = dataAutorizacaoObra;
+	}
+	public LocalDate getDataUltimoCredito() {
+		return dataUltimoCredito;
+	}
+	public void setDataUltimoCredito(LocalDate dataUltimoCredito) {
+		this.dataUltimoCredito = dataUltimoCredito;
+	}
+	public LocalDate getDataUltimaVistoria() {
+		return dataUltimaVistoria;
+	}
+	public void setDataUltimaVistoria(LocalDate dataUltimaVistoria) {
+		this.dataUltimaVistoria = dataUltimaVistoria;
+	}
+	public LocalDate getDataDeDesbloqueio() {
+		return dataDeDesbloqueio;
+	}
+	public void setDataDeDesbloqueio(LocalDate dataDeDesbloqueio) {
+		this.dataDeDesbloqueio = dataDeDesbloqueio;
+	}
+	public LocalDate getDataAprovacaoPrestContasCaixa() {
+		return dataAprovacaoPrestContasCaixa;
+	}
+	public void setDataAprovacaoPrestContasCaixa(LocalDate dataAprovacaoPrestContasCaixa) {
+		this.dataAprovacaoPrestContasCaixa = dataAprovacaoPrestContasCaixa;
+	}
+	public LocalDate getDataUltimoHistorico() {
+		return dataUltimoHistorico;
+	}
+	public void setDataUltimoHistorico(LocalDate dataUltimoHistorico) {
+		this.dataUltimoHistorico = dataUltimoHistorico;
+	}
+	public LocalDate getDataUltimaAlteracao() {
+		return dataUltimaAlteracao;
+	}
+	public void setDataUltimaAlteracao(LocalDate dataUltimaAlteracao) {
+		this.dataUltimaAlteracao = dataUltimaAlteracao;
+	}
+	public LocalDate getDataAio() {
+		return dataAio;
+	}
+	public void setDataAio(LocalDate dataAio) {
+		this.dataAio = dataAio;
+	}
+	public LocalDate getDataEntrada() {
+		return dataEntrada;
+	}
+	public void setDataEntrada(LocalDate dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+	public LocalDate getDataEncaminhamento() {
+		return dataEncaminhamento;
+	}
+	public void setDataEncaminhamento(LocalDate dataEncaminhamento) {
+		this.dataEncaminhamento = dataEncaminhamento;
+	}
+	public BigDecimal getSaldoPendente() {
+		return saldoPendente;
+	}
+	public void setSaldoPendente(BigDecimal saldoPendente) {
+		this.saldoPendente = saldoPendente;
+	}
+	public Boolean getPendente() {
+		return pendente;
+	}
+	public void setPendente(Boolean pendente) {
+		this.pendente = pendente;
+	}
+	public String getProt() {
+		return prot;
+	}
+	public void setProt(String prot) {
+		this.prot = prot;
+	}
+	public String getResponsavelEncaminhamento() {
+		return responsavelEncaminhamento;
+	}
+	public void setResponsavelEncaminhamento(String responsavelEncaminhamento) {
+		this.responsavelEncaminhamento = responsavelEncaminhamento;
+	}
+	public String getSituacaoTotal() {
+		return situacaoTotal;
+	}
+	public void setSituacaoTotal(String situacaoTotal) {
+		this.situacaoTotal = situacaoTotal;
+	}
+	public String getTipoDemanda() {
+		return tipoDemanda;
+	}
+	public void setTipoDemanda(String tipoDemanda) {
+		this.tipoDemanda = tipoDemanda;
+	}
+	public String getSubTipoDemanda() {
+		return subTipoDemanda;
+	}
+	public void setSubTipoDemanda(String subTipoDemanda) {
+		this.subTipoDemanda = subTipoDemanda;
+	}
+	public int getPrazoTotal() {
+		return prazoTotal;
+	}
+	public void setPrazoTotal(int prazoTotal) {
+		this.prazoTotal = prazoTotal;
+	}
+	public int getDiasRestantesParalisacao() {
+		return diasRestantesParalisacao;
+	}
+	public void setDiasRestantesParalisacao(int diasRestantesParalisacao) {
+		this.diasRestantesParalisacao = diasRestantesParalisacao;
+	}
+
 	
 }

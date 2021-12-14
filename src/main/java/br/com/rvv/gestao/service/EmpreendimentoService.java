@@ -1,5 +1,6 @@
 package br.com.rvv.gestao.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,14 @@ public class EmpreendimentoService {
 	private EmpreendimentoRepository empreendimentoRepository;
 
 	public Empreendimento getempreendimento(String nomeEmpreendimento, String objeto, String localidade,
-			String logradouro, Municipio municipio, Programa programa) {
+			String logradouro, String apelidoEmpreendimento, String observacaoEmpreendimento,
+			LocalDate dataSelecaoEmpreendimento, Municipio municipio, Programa programa) {
 
 		Optional<Empreendimento> empreendimentoBuscado = empreendimentoRepository.findByNome(nomeEmpreendimento);
 
 		if (!empreendimentoBuscado.isPresent()) {
 			Empreendimento empreendimento = new Empreendimento(nomeEmpreendimento, objeto, localidade, logradouro,
-					municipio, programa);
+					apelidoEmpreendimento, observacaoEmpreendimento, dataSelecaoEmpreendimento, municipio, programa);
 			empreendimentoRepository.save(empreendimento);
 			return empreendimento;
 		} else {

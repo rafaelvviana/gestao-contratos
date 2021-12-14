@@ -64,6 +64,8 @@ public class ReadAndUpdateService {
 			throw new IOException("Erro ao ler o arquivo." + error.getMessage());
 		} catch (Exception error) {
 			throw new Exception("Erro ao gravar no banco." + error.getMessage());
+		} finally {
+			mapCamposPlanilhaDeParaIndex.clear();
 		}
 
 		/**

@@ -1,5 +1,9 @@
 package br.com.rvv.gestao.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +13,10 @@ import br.com.rvv.gestao.controller.dto.ContratoLidoDto;
 import br.com.rvv.gestao.controller.dto.ResumoContratosDto;
 import br.com.rvv.gestao.helpers.ConverterHelper;
 import br.com.rvv.gestao.model.Contrato;
+import br.com.rvv.gestao.model.Regra;
 import br.com.rvv.gestao.model.enums.CargoCaixaEnum;
 import br.com.rvv.gestao.repository.ContratoRepository;
+import br.com.rvv.gestao.repository.RegraRepository;
 
 @Service
 public class ContratoService {
@@ -36,21 +42,73 @@ public class ContratoService {
 	@Autowired
 	private EntidadeService tomadorService;
 
-	public ResumoContratosDto resumoContratos() {
-		
-		ResumoContratosDto resumo = new ResumoContratosDto();
-		resumo.quantidadeTotalContratos = 25; // contratoRepository.findAll().size();
-		
-		resumo.quantidadeParalisadas = 10;
-		resumo.percentualParalisadas = Math.round(resumo.quantidadeParalisadas / resumo.quantidadeTotalContratos) * 100;
-		
-		resumo.quantidadePcf = 15;
-		resumo.percentualPcf = Math.round(resumo.quantidadePcf / resumo.quantidadeTotalContratos) * 100;
-		return resumo;
+	@Autowired
+	private RegraRepository regraRepository;
+
+	public long totalContratos() {
+		return contratoRepository.count();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public List<Contrato> listaDeContratosDaRegra(String urlRegra) {
+
+		Optional<Regra> regra = regraRepository.findByUrl(urlRegra);
+
+		if (regra.isPresent()) {
+			try {
+				Method metodo = contratoRepository.getClass().getMethod(regra.get().getMethod());
+				return (List<Contrato>) metodo.invoke(contratoRepository);
+
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
 	public void saveContrato(ContratoLidoDto contratoLido) {
 		contratoRepository.save(converterDtoParaContrato(contratoLido));
+	}
+
+	public List<Contrato> todosContratos() {
+		return contratoRepository.findAll();
+	}
+
+	public List<Contrato> contratosComSuspensiva() {
+		return contratoRepository.contratosComSuspensiva();
+	}
+
+	public List<Contrato> contratosSemDesbloqueio() {
+		return contratoRepository.contratosSemDesbloqueio();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ResumoContratosDto> listaResumoContratos() throws NoSuchMethodException, SecurityException {
+
+		if (regraRepository.count() == 0) {
+			this.inicializarRegras();
+		}
+
+		List<ResumoContratosDto> lista = new ArrayList<ResumoContratosDto>();
+		int quantidadeTodos = (int) totalContratos();
+
+		regraRepository.findAll().forEach(regra -> {
+			try {
+				Method metodo = contratoRepository.getClass().getMethod(regra.getMethod());
+				int quantidade = ((List<Contrato>) metodo.invoke(contratoRepository)).size();
+				long percentual = (quantidade > 0 ? Math.round((float) quantidade / quantidadeTodos * 100) : 0);
+				ResumoContratosDto resumo = new ResumoContratosDto(regra, quantidade, percentual);
+				lista.add(resumo);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+
+				e.printStackTrace();
+			}
+		});
+
+		return lista;
 	}
 
 	private Contrato converterDtoParaContrato(ContratoLidoDto contratoLidoDto) {
@@ -60,9 +118,9 @@ public class ContratoService {
 		try {
 			Optional<Contrato> contrato = contratoRepository
 					.findByNumeroOperacao(Integer.parseInt(contratoLidoDto.numeroOperacao));
-			
+
 			novoContrato = (contrato.isPresent() ? contrato.get() : new Contrato());
-			
+
 		} catch (NumberFormatException e) {
 			System.out.println("Erro ao buscar a operação!" + contratoLidoDto.numeroOperacao);
 			novoContrato = new Contrato();
@@ -123,11 +181,70 @@ public class ContratoService {
 		novoContrato.setVrUltimoDesbloqueio(ConverterHelper.bigDecimal(contratoLidoDto.vrUltimoDesbloqueio));
 		novoContrato.setSituacaoPrestacaoContas(contratoLidoDto.situacaoPrestacaoContas);
 
+		novoContrato.setAgencia(contratoLidoDto.agencia);
+		novoContrato.setNomeAgencia(contratoLidoDto.nomeAgencia);
+		novoContrato.setContaCorrente(contratoLidoDto.contaCorrente);
+		novoContrato.setContaPoupanca(contratoLidoDto.contaPoupanca);
+		novoContrato.setIdExterna(contratoLidoDto.idExterna);
+		novoContrato.setPortaria(contratoLidoDto.portaria);
+		novoContrato.setSimplificado(contratoLidoDto.simplificado);
+		novoContrato.setSr(contratoLidoDto.sr);
+		novoContrato.setObtv(contratoLidoDto.obtv);
+		novoContrato.setCliente(contratoLidoDto.cliente);
+		novoContrato.setGestor(contratoLidoDto.gestor);
+		novoContrato.setImpositivo(contratoLidoDto.impositivo);
+		novoContrato.setParlamentar(contratoLidoDto.parlamentar);
+		novoContrato.setEtiquetasDaOperacao(contratoLidoDto.etiquetasDaOperacao);
+		novoContrato.setUltimoHistorico(contratoLidoDto.ultimoHistorico);
+		novoContrato.setSituacaoAtualDetalhada(contratoLidoDto.situacaoAtualDetalhada);
+		novoContrato.setAutorAlteracao(contratoLidoDto.autorAlteracao);
+		novoContrato.setParalisadas(contratoLidoDto.paralisadas);
+
+		novoContrato.setrPrestacaoContas(ConverterHelper.dataLocalDate(contratoLidoDto.rPrestacaoContas));
+		novoContrato.setDataAssinatura(ConverterHelper.dataLocalDate(contratoLidoDto.dataAssinatura));
+		novoContrato.setDataVigencia(ConverterHelper.dataLocalDate(contratoLidoDto.dataVigencia));
+
+		novoContrato.setDataEnvioMandataria(ConverterHelper.dataLocalDate(contratoLidoDto.dataEnvioMandataria));
+		novoContrato.setDataPublicacaoDOU(ConverterHelper.dataLocalDate(contratoLidoDto.dataPublicacaoDOU));
+		novoContrato.setVencimentoSuspensiva(ConverterHelper.dataLocalDate(contratoLidoDto.vencimentoSuspensiva));
+		novoContrato.setDataProjetoBasicoSPA(ConverterHelper.dataLocalDate(contratoLidoDto.dataProjetoBasicoSPA));
+		novoContrato.setDataLAE(ConverterHelper.dataLocalDate(contratoLidoDto.dataLAE));
+		novoContrato.setDataAutorizacaoSPA(ConverterHelper.dataLocalDate(contratoLidoDto.dataAutorizacaoSPA));
+		novoContrato.setDataVRPL(ConverterHelper.dataLocalDate(contratoLidoDto.dataVRPL));
+		novoContrato
+				.setDataDeclInícioObraTomador(ConverterHelper.dataLocalDate(contratoLidoDto.dataDeclInícioObraTomador));
+		novoContrato.setDataAutorizacaoObra(ConverterHelper.dataLocalDate(contratoLidoDto.dataAutorizacaoObra));
+		novoContrato.setDataUltimoCredito(ConverterHelper.dataLocalDate(contratoLidoDto.dataUltimoCredito));
+		novoContrato.setDataUltimaVistoria(ConverterHelper.dataLocalDate(contratoLidoDto.dataUltimaVistoria));
+		novoContrato.setDataDeDesbloqueio(ConverterHelper.dataLocalDate(contratoLidoDto.dataDeDesbloqueio));
+		novoContrato.setDataAprovacaoPrestContasCaixa(
+				ConverterHelper.dataLocalDate(contratoLidoDto.dataAprovacaoPrestContasCaixa));
+		novoContrato.setDataUltimoHistorico(ConverterHelper.dataLocalDate(contratoLidoDto.dataUltimoHistorico));
+		novoContrato.setDataUltimaAlteracao(ConverterHelper.dataLocalDate(contratoLidoDto.dataUltimaAlteracao));
+
+//		novoContrato.setDataAio(ConverterHelper.dataLocalDate(contratoLidoDto.dataAio);
+//		novoContrato.setDataEntrada(ConverterHelper.dataLocalDate(contratoLidoDto.dataEntrada);
+//		novoContrato.setDataEncaminhamento(ConverterHelper.dataLocalDate(contratoLidoDto.dataEncaminhamento);
+//		
+//		novoContrato.setSaldoPendente(ConverterHelper.bigDecimal(contratoLidoDto.saldoPendente);
+
+//		novoContrato.setProt(contratoLidoDto.prot);
+//		novoContrato.setResponsavelEncaminhamento(contratoLidoDto.responsavelEncaminhamento);
+//		novoContrato.setSituacaoTotal(contratoLidoDto.situacaoTotal);
+//		novoContrato.setTipoDemanda(contratoLidoDto.tipoDemanda);
+//		novoContrato.setSubTipoDemanda(contratoLidoDto.subTipoDemanda);
+//		novoContrato.setPrazoTotal(contratoLidoDto.prazoTotal);
+
+		novoContrato.setDiasRestantesParalisacao(ConverterHelper.integer(contratoLidoDto.diasRestantesParalisacao));
+		novoContrato.setPendente(false);
+
 		novoContrato.setUnidadeCaixa(unidadeCaixaService.getunidadeCaixa(contratoLidoDto.unidadeCaixa));
 
 		novoContrato.setEmpreendimento(empreendimentoService.getempreendimento(contratoLidoDto.empreendimento,
 				contratoLidoDto.objetoEmpreendimento, contratoLidoDto.localidadeEmpreendimento,
-				contratoLidoDto.logradouroEmpreendimento,
+				contratoLidoDto.logradouroEmpreendimento, contratoLidoDto.apelidoEmpreendimento,
+				contratoLidoDto.observacaoEmpreendimento,
+				ConverterHelper.dataLocalDate(contratoLidoDto.dataSelecaoEmpreendimento),
 				municipioService.getMunicipio(contratoLidoDto.municipioEmpreendimento),
 				programaService.getPrograma(contratoLidoDto.programa, contratoLidoDto.objetivoPrograma)));
 
@@ -152,6 +269,119 @@ public class ContratoService {
 				tomadorService.getEntidade(contratoLidoDto.agentePromotorNome, contratoLidoDto.agentePromotorCnpj));
 
 		return novoContrato;
+	}
+
+	public void inicializarRegras() {
+
+		// 1
+		Regra regraSuspensiva = new Regra();
+		regraSuspensiva.setNome("SUSPENSIVA");
+		regraSuspensiva.setDescricao("Com suspensiva");
+		regraSuspensiva.setMethod("contratosComSuspensiva");
+		regraSuspensiva.setUrl("suspensiva");
+		regraRepository.save(regraSuspensiva);
+		// 2
+		Regra regraSemDesbloqueio = new Regra();
+		regraSemDesbloqueio.setNome("SEM_DESBLOQUEIO");
+		regraSemDesbloqueio.setDescricao("Sem desbloqueios");
+		regraSemDesbloqueio.setMethod("contratosSemDesbloqueio");
+		regraSemDesbloqueio.setUrl("semdesbloqueio");
+		regraRepository.save(regraSemDesbloqueio);
+		// 3
+		Regra regraSemDesbloqueioAguardandoProcessoLicitatorio = new Regra();
+		regraSemDesbloqueioAguardandoProcessoLicitatorio.setNome("SEM_DESBLOQUEIO_AGUARDANDO_PROCESSO_LICITATORIO");
+		regraSemDesbloqueioAguardandoProcessoLicitatorio
+				.setDescricao("Sem desbloqueio, aguardando Processo Licitatório");
+		regraSemDesbloqueioAguardandoProcessoLicitatorio
+				.setMethod("contratosSemDesbloqueioAguardandoProcessoLicitatorio");
+		regraSemDesbloqueioAguardandoProcessoLicitatorio.setUrl("semdesbloqueioaguardandolicitatorio");
+		regraRepository.save(regraSemDesbloqueioAguardandoProcessoLicitatorio);
+		// 4
+		Regra regraSemDesbloqueioAguardandoCreditoRecurso = new Regra();
+		regraSemDesbloqueioAguardandoCreditoRecurso.setNome("SEM_DESBLOQUEIO_AGUARDANDO_CREDITO_RECURSO");
+		regraSemDesbloqueioAguardandoCreditoRecurso.setDescricao("Sem desbloqueio, aguardando Crédito de Recusos");
+		regraSemDesbloqueioAguardandoCreditoRecurso.setMethod("contratosSemDesbloqueioAguardandoCreditoRecurso");
+		regraSemDesbloqueioAguardandoCreditoRecurso.setUrl("semdesbloqueioaguardandocreditorecurso");
+		regraRepository.save(regraSemDesbloqueioAguardandoCreditoRecurso);
+		// 5
+		Regra regraRap = new Regra();
+		regraRap.setNome("RAP");
+		regraRap.setDescricao("Restos a Pagar");
+		regraRap.setMethod("contratosSemDesbloqueioAguardandoCreditoRecurso");
+		regraRap.setUrl("rap");
+		regraRepository.save(regraRap);
+		// 6
+		Regra regraObraParalisada = new Regra();
+		regraObraParalisada.setNome("OBRA_PARALISADA");
+		regraObraParalisada.setDescricao("Obra Paralisada");
+		regraObraParalisada.setMethod("contratosObraParalisada");
+		regraObraParalisada.setUrl("obraparalisada");
+		regraRepository.save(regraObraParalisada);
+		// 7
+		Regra regraPcf = new Regra();
+		regraPcf.setNome("PCF");
+		regraPcf.setDescricao("Prestação de Contas Final");
+		regraPcf.setMethod("contratosPcf");
+		regraPcf.setUrl("pcf");
+		regraRepository.save(regraPcf);
+		// 8
+		Regra regraVigenciaVencida = new Regra();
+		regraVigenciaVencida.setNome("VIGENCIA_VENCIDA");
+		regraVigenciaVencida.setDescricao("Vigência vencida");
+		regraVigenciaVencida.setMethod("contratosComVigenciaVencida");
+		regraVigenciaVencida.setUrl("vigenciavencida");
+		regraRepository.save(regraVigenciaVencida);
+		// 9
+		Regra regraTce = new Regra();
+		regraTce.setNome("TCE");
+		regraTce.setDescricao("Tomada de Contas Especial");
+		regraTce.setMethod("contratosTce");
+		regraTce.setUrl("tce");
+		regraRepository.save(regraTce);
+		// 10
+		Regra regraNaoContratada = new Regra();
+		regraNaoContratada.setNome("NAO_CONTRATADA");
+		regraNaoContratada.setDescricao("Não contratada");
+		regraNaoContratada.setMethod("contratosNaoContratada");
+		regraNaoContratada.setUrl("naocontratada");
+		regraRepository.save(regraNaoContratada);
+		// 11
+		Regra regraCrCelebradoComInadimplencia = new Regra();
+		regraCrCelebradoComInadimplencia.setNome("CR_CELEBRADO_COM_INADIMPLENCIA");
+		regraCrCelebradoComInadimplencia.setDescricao("CR Celebrado com inadimplência");
+		regraCrCelebradoComInadimplencia.setMethod("contratosCrCelebradoComInadimplencia");
+		regraCrCelebradoComInadimplencia.setUrl("crcelebradocominadimplencia");
+		regraRepository.save(regraCrCelebradoComInadimplencia);
+		// 12
+		Regra regraSaldoDeContas = new Regra();
+		regraSaldoDeContas.setNome("SALDO_DE_CONTAS");
+		regraSaldoDeContas.setDescricao("Saldo de contas");
+		regraSaldoDeContas.setMethod("contratosSaldoContas");
+		regraSaldoDeContas.setUrl("saldocontas");
+		regraRepository.save(regraSaldoDeContas);		
+		// 13
+		Regra regraDesatualizadoMaisDeDias = new Regra();
+		regraDesatualizadoMaisDeDias.setNome("DESATUALIZADO_MAIS_30_DIAS");
+		regraDesatualizadoMaisDeDias.setDescricao("Desatualizado a mais de 30 dias");
+		regraDesatualizadoMaisDeDias.setMethod("contratosDesatualizadoMais30Dias");
+		regraDesatualizadoMaisDeDias.setUrl("desatualizadomais30dias");
+		regraRepository.save(regraDesatualizadoMaisDeDias);		
+		// 14
+		Regra regraOperacaoComMenos45DiasParalisacao = new Regra();
+		regraOperacaoComMenos45DiasParalisacao.setNome("OPERACAO_COM_MENOS_45_DIAS_PARALISACAO");
+		regraOperacaoComMenos45DiasParalisacao.setDescricao("Menos 45 dias paralisação");
+		regraOperacaoComMenos45DiasParalisacao.setMethod("contratosOperacaoComMenos45DiasParalisacao");
+		regraOperacaoComMenos45DiasParalisacao.setUrl("operacaomenos45idasparalisacao");
+		regraRepository.save(regraOperacaoComMenos45DiasParalisacao);		
+		
+		// ****
+
+		Regra regraTodos = new Regra();
+		regraTodos.setNome("TODOS");
+		regraTodos.setDescricao("Todos os contratos");
+		regraTodos.setMethod("findAll");
+		regraTodos.setUrl("todos");
+		regraRepository.save(regraTodos);
 	}
 
 }

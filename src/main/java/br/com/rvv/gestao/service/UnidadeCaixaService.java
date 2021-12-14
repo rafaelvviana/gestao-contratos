@@ -1,5 +1,6 @@
 package br.com.rvv.gestao.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,10 @@ public class UnidadeCaixaService {
 
 	@Autowired
 	private UnidadeCaixaRepository unidadeCaixaRepository;
+	
+	public List<UnidadeCaixa> listaUnidades() {
+		return unidadeCaixaRepository.findAll();
+	}
 	
 	public UnidadeCaixa getunidadeCaixa(String nomeUnidadeCaixa) {
 		

@@ -2,7 +2,7 @@
 <html>
 	<head th:replace="~{base :: head}"></head>
 	
-<body onLoad="onLoad()">
+<body>
 	
 	<div th:replace="~{base :: menu}"></div>
 	
@@ -20,12 +20,16 @@
 						<th>Programa</th>
 						<th>Objeto</th>
 					</tr>
-					<tr v-for="contrato in contratos">
-						<td>{{contrato.numeroOperacao}}-{{contrato.dvOperacao}}</td>
-						<td>{{contrato.numeroSiconv}}</td>						
-						<td>{{contrato.tomadorOperacao.nome}}</td>
-						<td>{{contrato.empreendimento.programa.nome}}</td>
-						<td>{{contrato.empreendimento.objeto}}</td>
+					<tr th:each="contrato : ${listaContratos}">
+						<td> 
+							<span th:text="${contrato.numeroOperacao}"></span>
+							<span>-</span>
+							<span th:text="${contrato.dvOperacao}"></span>
+						</td>
+						<td th:text="${contrato.numeroSiconv}"></td>
+						<td th:text="${contrato.tomadorOperacao.nome}"></td>
+						<td th:text="${contrato.empreendimento.programa.nome}"></td>
+						<td th:text="${contrato.empreendimento.objeto}"></td>
 					</tr>
 				</tbody>				
 				  
@@ -38,25 +42,6 @@
 
 	
 	<div th:replace="~{base :: scripts}"></div>
-
-	<script>
-		function onLoad(){
-			var app = new Vue({
-				el: '#listaContratos',
-				data: {
-					contratos: []
-				},
-				mounted() {
-					axios
-						.get('http://localhost:8080/contratos')
-						.then(response => {
-							this.contratos = response.data
-						})
-				}
-			})
-		}
-	
-	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>

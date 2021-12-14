@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.rvv.gestao.controller.dto.ResumoContratosDto;
 import br.com.rvv.gestao.model.UnidadeCaixa;
-import br.com.rvv.gestao.repository.UnidadeCaixaRepository;
 import br.com.rvv.gestao.service.ContratoService;
+import br.com.rvv.gestao.service.UnidadeCaixaService;
 
 @Controller
 public class GestaoController {
 
 	@Autowired
-	private UnidadeCaixaRepository unidadeCaixaRepository;
+	private UnidadeCaixaService unidadeCaixaService;
 	
 	@Autowired
 	private ContratoService contratoService;
@@ -24,11 +24,17 @@ public class GestaoController {
 	@RequestMapping("/")	
 	public String home(Model model) {
 		
-		List<UnidadeCaixa> listaUnidades = unidadeCaixaRepository.findAll();		
-		ResumoContratosDto resumo = contratoService.resumoContratos();
+		List<UnidadeCaixa> listaUnidades = unidadeCaixaService.listaUnidades();		
+		List<ResumoContratosDto> listaResumoContrato = null;
+		try {
+			listaResumoContrato = contratoService.listaResumoContratos();
+		} catch (NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		model.addAttribute("unidades", listaUnidades);
-		model.addAttribute("resumo", resumo);
+		model.addAttribute("resumos", listaResumoContrato);
 		return "home"; 
 	}
 	
