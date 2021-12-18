@@ -19,7 +19,16 @@ public class UnidadeCaixaService {
 		return unidadeCaixaRepository.findAll();
 	}
 	
-	public UnidadeCaixa getunidadeCaixa(String nomeUnidadeCaixa) {
+	public UnidadeCaixa getUnidadeCaixa(long idUnidadeCaixa) {
+		Optional<UnidadeCaixa> unidade = unidadeCaixaRepository.findById(idUnidadeCaixa);
+
+		if (unidade.isPresent()) {
+			return unidade.get();			
+		}
+		return null;		
+	}
+	
+	public UnidadeCaixa getUnidadeCaixa(String nomeUnidadeCaixa) {
 		
 		Optional<UnidadeCaixa> unidadeCaixaBuscado = unidadeCaixaRepository.findByNome(nomeUnidadeCaixa);
 

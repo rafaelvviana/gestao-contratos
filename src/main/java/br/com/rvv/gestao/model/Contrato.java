@@ -2,13 +2,17 @@ package br.com.rvv.gestao.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Contrato {
@@ -16,7 +20,7 @@ public class Contrato {
 	@Id	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected long id;
 	
-	private int numeroOperacao;
+	private long numeroOperacao;
 	private int dvOperacao;
 	private long numeroSiconv;
 	private long numeroPropostaSiconv;
@@ -171,16 +175,25 @@ public class Contrato {
 	@ManyToOne
 	private Entidade agentePromotorOperacao;
 	
+	@OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Demanda> demandas;
+		
+	public List<Demanda> getDemandas() {
+		return demandas;
+	}
+	public void setDemandas(List<Demanda> demandas) {
+		this.demandas = demandas;
+	}
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	public int getNumeroOperacao() {
+	public long getNumeroOperacao() {
 		return numeroOperacao;
 	}
-	public void setNumeroOperacao(int numeroOperacao) {
+	public void setNumeroOperacao(long numeroOperacao) {
 		this.numeroOperacao = numeroOperacao;
 	}
 	public int getDvOperacao() {

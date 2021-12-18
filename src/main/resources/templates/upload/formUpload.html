@@ -8,50 +8,39 @@
 
 	<div class="container">
 		<div class="card shadow mb-4">
-			<div class="card-header py-3 cabecalho-azul">
-				<h6 class="mb-0">Atualizar Operações</h6>
+			<div class="cabecalho-azul card-header py-3">
+				<h6 class="mb-0">Atualizar <span th:text="${sTipoUpload}">Operações</span></h6>
 			</div>
 
-			<div class="card-body">
-				<form action="/upload" method="post" enctype="multipart/form-data">
-					<div class="form-group">
-						<p>Atenção! O arquivo deve estar no formato "*.xlsx" (Excel
-							2003 ou acima).</p>
-						<input class="btn" name="arquivo" type="file">
+			<div class="card-body">				
+				<form th:action="@{/upload}" class="card-body" method="POST" enctype="multipart/form-data">
+					<div class="row">
+						<div class="col">Atenção! O arquivo deve estar no formato "*.xlsx" (Excel
+							2003 ou acima).
+							<p>
+							O arquivo deve estar no formato da opção escolhida.
+							</p>
+						</div>
+						<input type="hidden" th:name="tipoUpload" th:value="${tipoUpload}" />
+						<div class="row mb-4">
+							<div class="col">
+								<input class="btn" name="arquivo" type="file" required>								
+							</div>
+							<div class="col" th:classappend="${tipoUpload == 'demanda' ? 'visible' : 'invisible'}">
+								<div>
+									Selecione uma Unidade:
+								</div>
+								<select th:name="idUnidadeEscolhida" class="form-select" aria-label="Default select example" 
+									th:required="${tipoUpload == 'demanda' ? 'true' : 'false'}">
+									<th:block th:each="unidade: ${unidades}">
+										<option th:value="${unidade.id}" th:text="${unidade.nome}">One</option>
+									</th:block>									
+								</select>
+							</div>
+						</div>					
+						<hr />
 					</div>
-					<hr />
-					<div class="form-group">
-						<p>Escolha a opção correspondente ao tipo do arquivo
-							selecionado. A escolha de um tipo não compatível impossibilita a
-							importação.</p>
-					</div>
-					<div class="form-group">
-						<div class="custom-control custom-radio">
-							<input type="radio" id="customRadio1" name="tipoImportacao"
-								class="custom-control-input" value="1" checked> <label
-								class="custom-control-label" for="customRadio1">OGU</label>
-						</div>
-
-						<div class="custom-control custom-radio">
-							<input type="radio" id="customRadio2" name="tipoImportacao"
-								class="custom-control-input" value="2"> <label
-								class="custom-control-label" for="customRadio2">Saldo de
-								Contas</label>
-						</div>
-
-						<div class="custom-control custom-radio">
-							<input type="radio" id="customRadio3" name="tipoImportacao"
-								class="custom-control-input" value="3"> <label
-								class="custom-control-label" for="customRadio3">Contas
-								Pendentes</label>
-						</div>
-
-						<div class="custom-control custom-radio">
-							<input type="radio" id="customRadio4" name="tipoImportacao"
-								class="custom-control-input" value="4"> <label
-								class="custom-control-label" for="customRadio4">Demandas</label>
-						</div>
-						<br />
+					<div>						
 						<button class="btn btn-primary" type="submit">Enviar</button>
 					</div>
 				</form>

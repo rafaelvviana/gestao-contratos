@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+	<head th:replace="~{base :: head}"></head>
+	
+<body>
+	
+	<div th:replace="~{base :: menu}"></div>
+	
+	<div class="container">		
+		<div>
+			<div class="card border-primary">
+				<div class="card-header">
+					<div>
+						<span class="font-weight-bold">Contrato:</span>
+						<span th:text="${contrato.numeroOperacao}"></span>-<span th:text="${contrato.dvOperacao}"></span>
+						
+						<span class="font-weight-bold">|</span>
+						
+						<span class="font-weight-bold">Tomador:</span>
+						<span th:text="${contrato.tomadorOperacao.nome}"></span>
+						
+						<span class="font-weight-bold">|</span>
+						
+						<span class="font-weight-bold">Cnpj:</span>
+						<span th:text="${contrato.tomadorOperacao.cnpj}"></span>
+						
+					</div>
+					<div>							
+						<span class="font-weight-bold">Programa:</span>
+						<span th:text="${contrato.empreendimento.programa.nome}"></span>
+					</div>
+					<div>							
+						<span class="font-weight-bold">Objeto:</span>
+						<span th:text="${contrato.empreendimento.objeto}"></span>
+					</div>
+				</div>
+				
+				<!-- ******************************************************************************************************************************************** -->
+				
+				<div class="card-body">
+					<div class="row my-2">
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="situacaoCT" th:value="${contrato.situacaoCT}">
+								<label for="situacaoCT">Situação CT</label>				
+							</form>
+						</div>	
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="estagioCT" th:value="${contrato.estagioCT}">
+								<label for="estagioCT">Estágio CT</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="situacaoObra" th:value="${contrato.situacaoObra}">
+								<label for="situacaoObra">Sit. Obra</label>				
+							</form>
+						</div>	
+					</div>
+					
+					<hr class="hr-azul">					
+					<!-- ******************************************************************************************************************************************** -->
+					
+					<div class="row my-2">								
+						<div class="col">
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataSelecao" th:value="${#temporals.format(contrato.empreendimento.dataSelecaoEmpreendimento, 'dd/MM/yyyy')}">
+								<label for="dataSelecao">Data Seleção</label>
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataAssinatura" th:value="${#temporals.format(contrato.dataAssinatura, 'dd/MM/yyyy')}">
+								<label for="dataAssinatura">Data Assinatura</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataPublicacaoDOU" th:value="${#temporals.format(contrato.dataPublicacaoDOU, 'dd/MM/yyyy')}">
+								<label for="dataPublicacaoDOU">Data Publicação DOU</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataVigencia" th:value="${#temporals.format(contrato.dataVigencia, 'dd/MM/yyyy')}">
+								<label for="dataVigencia">Data Vigência</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="vencimentoSuspensiva" th:value="${#temporals.format(contrato.vencimentoSuspensiva, 'dd/MM/yyyy')}">
+								<label for="vencimentoSuspensiva">Data Suspensiva</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataLAE" th:value="${#temporals.format(contrato.dataLAE, 'dd/MM/yyyy')}">
+								<label for="dataLAE">Data LAE</label>				
+							</form>
+						</div>
+					</div>
+					
+					
+					<!-- ******************************************************************************************************************************************** -->
+											
+					<div class="row my-2">
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataAutorizacaoSPA" th:value="${#temporals.format(contrato.dataAutorizacaoSPA, 'dd/MM/yyyy')}">
+								<label for="dataAutorizacaoSPA">Data Autorização SPA</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataVRPL" th:value="${#temporals.format(contrato.dataVRPL, 'dd/MM/yyyy')}">
+								<label for="dataVRPL">Data Aceite VRPL</label>				
+							</form>
+						</div>						
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataAutorizacaoObra" th:value="${#temporals.format(contrato.dataAutorizacaoObra, 'dd/MM/yyyy')}">
+								<label for="dataAutorizacaoObra">Data Autorização Obra</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataUltimaVistoria" th:value="${#temporals.format(contrato.dataUltimaVistoria, 'dd/MM/yyyy')}">
+								<label for="dataUltimaVistoria">Data Última Vistoria</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="rPrestacaoContas" th:value="${#temporals.format(contrato.rPrestacaoContas, 'dd/MM/yyyy')}">
+								<label for="rPrestacaoContas">Recebimento PCF</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="dataAprovacaoPrestContasCaixa" th:value="${#temporals.format(contrato.dataAprovacaoPrestContasCaixa, 'dd/MM/yyyy')}">
+								<label for="dataAprovacaoPrestContasCaixa">Aprovação PCF Caixa</label>				
+							</form>
+						</div>						
+					</div>
+					
+					
+					<!-- ******************************************************************************************************************************************** -->
+					
+					<div class="row my-2">
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="idExterna" th:value="${contrato.idExterna}">
+								<label for="idExterna">ID Externa</label>				
+							</form>
+						</div>						
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="simplificado" th:value="${contrato.simplificado}">
+								<label for="simplificado">Simplificado</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="portaria" th:value="${contrato.portaria}">
+								<label for="portaria">Portaria</label>				
+							</form>
+						</div>
+					</div>
+					
+					<!-- ******************************************************************************************************************************************** -->
+					
+					<div class="row my-2">
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="parlamentar" th:value="${contrato.parlamentar}">
+								<label for="parlamentar">Parlamentar</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="impositivo" th:value="${contrato.impositivo}">
+								<label for="impositivo">Impositivo</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="obtv" th:value="${contrato.obtv}">
+								<label for="obtv">OBTV</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="contaCorrente" th:value="${contrato.contaCorrente}">
+								<label for="contaCorrente">Conta Corrente</label>				
+							</form>
+						</div>
+					</div>
+					
+					<!-- ******************************************************************************************************************************************** -->
+					
+					<div class="row my-2">
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="operacionalAtual" th:value="${contrato.operacionalAtual.nome}">
+								<label for="operacionalAtual">Operacional</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="engenheiroAtual" th:value="${contrato.engenheiroAtual.nome}">
+								<label for="engenheiroAtual">Engenharia</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="socialAtual" th:value="${contrato.socialAtual.nome}">
+								<label for="socialAtual">Social</label>				
+							</form>
+						</div>
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="representanteCaixaAtual" th:value="${contrato.representanteCaixaAtual.nome}">
+								<label for="representanteCaixaAtual">Repr. Caixa</label>				
+							</form>
+						</div>					
+					</div>
+					
+					<hr class="hr-azul">
+					<!-- ******************************************************************************************************************************************** -->
+					
+					<div class="row my-2">
+						<div class="col">				
+							<form class="form-floating">
+								<input readonly type="text" class="form-control" id="etiquetas" th:value="${contrato.etiquetasDaOperacao}">
+								<label for="etiquetas">Etiquetas</label>				
+							</form>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+    		
+	</div>
+
+	
+	<div th:replace="~{base :: scripts}"></div>
+
+</body>
+
+<footer th:replace="~{base :: footer}"></footer>
+
+</html>

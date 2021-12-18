@@ -42,7 +42,7 @@ public final class ConverterHelper {
 	
 	public static LocalDate dataLocalDate(String pDataObtida) {
 		try {
-			if (pDataObtida == "") {
+			if((pDataObtida == null) || (pDataObtida == "")) {
 				return null;
 			}
 			DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.US);

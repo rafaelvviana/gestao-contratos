@@ -1,0 +1,25 @@
+Dt. Encam.,dataEncaminhamento
+Dt. Entrada,dataEntrada
+Tempo Exec.,tempoExecucao
+Tempo Desloc.,tempoDeslocamento
+Prot.,protocolo
+Div.,div
+Tipo Prot.,tipoProcolo
+Doc.,documento
+Tipo Doc.,tipoDocumento
+Entidade,tomadorNome
+Tipo,tipoDemanda
+Subtipo,subTipoDemanda
+Operação,numeroOperacao
+Origem,origem
+Assunto,assunto
+Situação,situacao
+Externo,externo
+Dt. Encam. Externo,dataEncaminhamentoExterno
+Obs. Externo,obsExterno
+Situação Subtipo,situacaoSubTipo
+Prazo Subtipo,prazoSubTipo
+Situação Total,situacaoTotal
+Prazo Total,prazoTotal
+Resp.,responsavel
+Equipe,equipe

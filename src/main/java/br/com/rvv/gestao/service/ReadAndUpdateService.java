@@ -5,7 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,68 +25,70 @@ import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import br.com.rvv.gestao.controller.dto.ContratoLidoDto;
+import br.com.rvv.gestao.controller.dto.ContratoDto;
+import br.com.rvv.gestao.controller.dto.DemandaDto;
 import br.com.rvv.gestao.controller.dto.RegistroImportadoDto;
+import br.com.rvv.gestao.controller.dto.UploadLogDto;
+import br.com.rvv.gestao.controller.dto.UploadLogProjecaoDto;
+import br.com.rvv.gestao.model.UploadLog;
+import br.com.rvv.gestao.model.enums.TipoUploadEnum;
+import br.com.rvv.gestao.repository.UploadLogRepository;
 
 @Service
 public class ReadAndUpdateService {
 	
 	@Autowired
 	private ContratoService contratoService;
+	
+	@Autowired
+	private DemandaService demandaService;
+		
+	@Autowired
+	private UploadLogRepository uploadRepository;
 
-	private HashMap<String, Integer> mapCamposContratoDtoDeParaIndex;
+	private HashMap<String, Integer> mapCamposRegistroDtoDeParaIndex;
 	private HashMap<String, String> mapCamposPlanilhaDeParaContratoDto;
 	private HashMap<Integer, String> mapCamposPlanilhaDeParaIndex = new HashMap<Integer, String>();
-
-	public ReadAndUpdateService() throws FileNotFoundException, IOException {
-		mapCamposContratoDtoDeParaIndex = getCamposContratoDtoDeParaIndex();
-		mapCamposPlanilhaDeParaContratoDto = getCamposPlanilhaDeParaContratoDto();
-	}
-
-	@Async
-	public void publishFile(String nomeArquivoUpload) throws Exception {
-
-		try {
-			File localFile = new File(nomeArquivoUpload);
-
-			getSheetFromFile(new FileInputStream(localFile), 0).forEach(row -> {
-				if (row.getRowNum() == 0) {
-					getFileHeader(row);
-				} else 
-				if (row.getRowNum() > 1) {				
-					contratoService.saveContrato(getRecordsFromFile(row));
-				}
-			});
-
-			localFile.delete();
-
-			/**
-			 * TODO PONTO DE ATENÇAO
-			 */
-
-		} catch (IOException error) {
-			throw new IOException("Erro ao ler o arquivo." + error.getMessage());
-		} catch (Exception error) {
-			throw new Exception("Erro ao gravar no banco." + error.getMessage());
-		} finally {
-			mapCamposPlanilhaDeParaIndex.clear();
+	private Resource dicionarioContratoDto = new ClassPathResource("files/dicionario.contrato.dto");
+	private Resource dicionarioDemandaDto = new ClassPathResource("files/dicionario.demanda.dto");
+	
+	private String tipoUpload;
+	
+	private Resource getResourceRegistroImportadoDto() {
+		if(this.tipoUpload.equals(TipoUploadEnum.CONTRATO.getDescricao())) {
+			return dicionarioContratoDto;
+		} else 
+		if(this.tipoUpload.equals(TipoUploadEnum.DEMANDAS.getDescricao())) {
+			return dicionarioDemandaDto;
 		}
-
-		/**
-		 * TODO implement a return promise
-		 */
-		System.out.println("Atualização finalizada com sucesso!");
+		return null;
 	}
-
+	
+	private void inicializarMapsDeCampos() throws FileNotFoundException, IOException {
+		mapCamposRegistroDtoDeParaIndex = getCamposRegistroDtoDeParaIndex();
+		mapCamposPlanilhaDeParaContratoDto = getCamposPlanilhaDeParaContratoDto(getResourceRegistroImportadoDto());
+	}
+	
+	private void limparMapsDeCampos() {
+		mapCamposPlanilhaDeParaIndex.clear();
+		mapCamposRegistroDtoDeParaIndex.clear();
+	}
+	
 	private void getFileHeader(Row row) {		
 		row.forEach(celula -> mapCamposPlanilhaDeParaIndex.put(mapCamposPlanilhaDeParaIndex.size(),
 				getCellValue(celula).toString().replace(" ", "")));	
 	}
 
-	private ContratoLidoDto getRecordsFromFile(Row row) {
-		return (ContratoLidoDto) getRegistroFromRow(row, new ContratoLidoDto());		
+	private RegistroImportadoDto getRecordsFromFile(Row row) {
+		if(this.tipoUpload.equals(TipoUploadEnum.CONTRATO.getDescricao())) {
+			return getRegistroFromRow(row, new ContratoDto());
+		} else
+		if(this.tipoUpload.equals(TipoUploadEnum.DEMANDAS.getDescricao())) {
+			return getRegistroFromRow(row, new DemandaDto());
+		}
+		return null;
 	}
-
+		
 	private Sheet getSheetFromFile(FileInputStream arquivo, Integer numSheet) throws IOException {
 		try {
 			@SuppressWarnings("resource")
@@ -94,10 +100,11 @@ public class ReadAndUpdateService {
 	}
 
 	private RegistroImportadoDto getRegistroFromRow(Row row, RegistroImportadoDto registroImportado) {
+		
 		Field[] fields = registroImportado.getClass().getDeclaredFields();
 		row.forEach(celula -> {
 			try {
-				Integer idCampoNoBanco = getIdCampoContratoDto(celula.getColumnIndex());
+				Integer idCampoNoBanco = getIdCampoRegistroDto(celula.getColumnIndex());
 				if (idCampoNoBanco != null) {
 					fields[idCampoNoBanco].set(registroImportado, getCellValue(celula).toString());
 				}
@@ -109,27 +116,34 @@ public class ReadAndUpdateService {
 		return registroImportado;
 	}
 
-	private Integer getIdCampoContratoDto(int i) {
+	private Integer getIdCampoRegistroDto(int i) {
 		try {
-			return mapCamposContratoDtoDeParaIndex
+			return mapCamposRegistroDtoDeParaIndex
 					.get(mapCamposPlanilhaDeParaContratoDto.get(mapCamposPlanilhaDeParaIndex.get(i)));
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	private HashMap<String, Integer> getCamposContratoDtoDeParaIndex() {
-		HashMap<String, Integer> listaCamposContratoDtoDeParaIndex = new HashMap<String, Integer>();
-		Field[] campos = ContratoLidoDto.class.getFields();
-		for (Field field : campos) {
-			listaCamposContratoDtoDeParaIndex.put(field.getName(), listaCamposContratoDtoDeParaIndex.size());
+	private HashMap<String, Integer> getCamposRegistroDtoDeParaIndex()  {
+		HashMap<String, Integer> listaCamposRegistroDtoDeParaIndex = new HashMap<String, Integer>();
+		
+		Field[] campos = null;
+		if(this.tipoUpload.equals(TipoUploadEnum.CONTRATO.getDescricao())) {
+			campos = ContratoDto.class.getFields();
+		} else 
+		if(this.tipoUpload.equals(TipoUploadEnum.DEMANDAS.getDescricao())) {
+			campos = DemandaDto.class.getFields();
 		}
-		return listaCamposContratoDtoDeParaIndex;
+		
+		for (Field field : campos) {
+			listaCamposRegistroDtoDeParaIndex.put(field.getName(), listaCamposRegistroDtoDeParaIndex.size());
+		}
+		return listaCamposRegistroDtoDeParaIndex;
 	}
 
-	private HashMap<String, String> getCamposPlanilhaDeParaContratoDto() throws FileNotFoundException, IOException {
-		HashMap<String, String> listaCamposPlanilhaDeParaContratoDto = new HashMap<String, String>();
-		Resource resource = new ClassPathResource("files/dicionario.contrato.dto");
+	private HashMap<String, String> getCamposPlanilhaDeParaContratoDto(Resource resource) throws FileNotFoundException, IOException {
+		HashMap<String, String> listaCamposPlanilhaDeParaContratoDto = new HashMap<String, String>();		
 		Scanner scanner = new Scanner(resource.getFile());
 		while (scanner.hasNextLine()) {
 			String linha = scanner.nextLine();
@@ -168,4 +182,85 @@ public class ReadAndUpdateService {
 		return cellValue;
 	}
 
+	@Async
+	public void publishFile(String nomeArquivoUpload, String tipoUpload, long idUnidadeEscolhida) throws Exception {
+
+		try {
+			this.tipoUpload = tipoUpload;
+			inicializarMapsDeCampos();
+						
+			File localFile = new File(nomeArquivoUpload);
+
+			getSheetFromFile(new FileInputStream(localFile), 0).forEach(row -> {
+				if(tipoUpload.equals(TipoUploadEnum.CONTRATO.getDescricao()) && (row.getRowNum() == 0)) {
+					getFileHeader(row);
+				} else 
+				if(tipoUpload.equals(TipoUploadEnum.DEMANDAS.getDescricao()) && (row.getRowNum() == 1)) {
+					getFileHeader(row);
+				} else
+				if (row.getRowNum() > 1) {	
+					if(tipoUpload.equals(TipoUploadEnum.CONTRATO.getDescricao())) {
+						contratoService.saveContrato((ContratoDto) getRecordsFromFile(row));	
+					} else
+					if(tipoUpload.equals(TipoUploadEnum.DEMANDAS.getDescricao())) {						
+						demandaService.saveDemanda((DemandaDto) getRecordsFromFile(row), idUnidadeEscolhida);							
+					}	
+				}
+			});
+
+			localFile.delete();
+			
+			try {				
+				UploadLog log = new UploadLog(tipoUpload, LocalDateTime.now());
+				uploadRepository.save(log);
+			} catch (Exception e) {
+				throw new Exception("Erro ao gravar o log." + e.getMessage());
+			}
+			
+			/**
+			 * TODO PONTO DE ATENÇAO
+			 */
+
+		} catch (IOException error) {
+			throw new IOException("Erro ao ler o arquivo." + error.getMessage());
+		} catch (Exception error) {
+			throw new Exception("Erro ao gravar no banco." + error.getMessage());
+		} finally {
+			limparMapsDeCampos();			
+		}
+
+		/**
+		 * TODO implement a return promise
+		 */
+		System.out.println("Atualização finalizada com sucesso!");
+	}
+	
+	public List<UploadLogDto> getListaUploadLog() {		
+		List<UploadLogDto> listaUploadLog = new ArrayList<UploadLogDto>();
+		List<UploadLogProjecaoDto> listaUploadDto = uploadRepository.getUltimaAtualizacoes(); 
+		
+		listaUploadDto.forEach(uploadProjecaoDto -> {
+						
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDateTime agora = LocalDateTime.parse(uploadProjecaoDto.getData().substring(0, 19), formatter);
+		
+			String tipo = null;
+			if(uploadProjecaoDto.getTipo().equals("contrato")) {
+				tipo = "Operações";
+			} else
+			if(uploadProjecaoDto.getTipo().equals("demanda")) {
+				tipo = "Demandas";
+			} else
+			if(uploadProjecaoDto.getTipo().equals("saldo")) {
+				tipo = "Saldo em Contas";
+			} else {			
+				tipo = "Pendências";
+			}
+			
+			UploadLogDto upload = new UploadLogDto(tipo, agora);
+			listaUploadLog.add(upload);
+		});
+		
+		return listaUploadLog; 
+	}
 }

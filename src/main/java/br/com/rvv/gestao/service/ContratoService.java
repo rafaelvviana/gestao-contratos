@@ -9,11 +9,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.rvv.gestao.controller.dto.ContratoLidoDto;
+import br.com.rvv.gestao.controller.dto.ContratoDto;
 import br.com.rvv.gestao.controller.dto.ResumoContratosDto;
 import br.com.rvv.gestao.helpers.ConverterHelper;
 import br.com.rvv.gestao.model.Contrato;
 import br.com.rvv.gestao.model.Regra;
+import br.com.rvv.gestao.model.UnidadeCaixa;
 import br.com.rvv.gestao.model.enums.CargoCaixaEnum;
 import br.com.rvv.gestao.repository.ContratoRepository;
 import br.com.rvv.gestao.repository.RegraRepository;
@@ -23,7 +24,11 @@ public class ContratoService {
 
 	@Autowired
 	private ContratoRepository contratoRepository;
+	
+	@Autowired
+	private RegraRepository regraRepository;
 
+	
 	@Autowired
 	private FuncionarioService funcionarioService;
 
@@ -42,22 +47,47 @@ public class ContratoService {
 	@Autowired
 	private EntidadeService tomadorService;
 
-	@Autowired
-	private RegraRepository regraRepository;
+	private Contrato getContratoFromOptional(Optional<Contrato> contrato) {		
+		if(contrato.isPresent()) {
+			return contrato.get();
+		}
+		return null;
+	}
 
+	public Contrato getContratoPorId(long id) {
+		return getContratoFromOptional(contratoRepository.findById(id));
+	}
+	
+	public Contrato getContratoPorNumeroOperacao(long numeroOperacao) {
+		return getContratoFromOptional(contratoRepository.findByNumeroOperacao(numeroOperacao));
+	}
+	
 	public long totalContratos() {
 		return contratoRepository.count();
 	}
+	
+	public List<Contrato> getTodosContratosPorUnidade(UnidadeCaixa unidade) {
+		return contratoRepository.findByUnidadeCaixa(unidade);
+	}
+	
+	public String obterNomeDaRegraDaUrl(String urlRegra) {
+		Optional<Regra> regra = regraRepository.findByUrl(urlRegra);
+
+		if (regra.isPresent()) {
+			return regra.get().getDescricao();
+		}
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
-	public List<Contrato> listaDeContratosDaRegra(String urlRegra) {
+	public List<Contrato> listaDeContratosDaRegra(String urlRegra, long idUnidade) {
 
 		Optional<Regra> regra = regraRepository.findByUrl(urlRegra);
 
 		if (regra.isPresent()) {
 			try {
-				Method metodo = contratoRepository.getClass().getMethod(regra.get().getMethod());
-				return (List<Contrato>) metodo.invoke(contratoRepository);
+				Method metodo = contratoRepository.getClass().getMethod(regra.get().getMethod(), long.class);
+				return (List<Contrato>) metodo.invoke(contratoRepository, idUnidade);
 
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
@@ -67,40 +97,31 @@ public class ContratoService {
 		}
 		return null;
 	}
-
-	public void saveContrato(ContratoLidoDto contratoLido) {
-		contratoRepository.save(converterDtoParaContrato(contratoLido));
-	}
-
-	public List<Contrato> todosContratos() {
-		return contratoRepository.findAll();
-	}
-
-	public List<Contrato> contratosComSuspensiva() {
-		return contratoRepository.contratosComSuspensiva();
-	}
-
-	public List<Contrato> contratosSemDesbloqueio() {
-		return contratoRepository.contratosSemDesbloqueio();
-	}
-
+		
 	@SuppressWarnings("unchecked")
-	public List<ResumoContratosDto> listaResumoContratos() throws NoSuchMethodException, SecurityException {
+	public List<ResumoContratosDto> listaResumoContratos(long idUnidade) throws NoSuchMethodException, SecurityException {
 
+		/**
+		 * TODO
+		 * Código deve ser removido.
+		 * Inserir dados no banco
+		 */
 		if (regraRepository.count() == 0) {
 			this.inicializarRegras();
 		}
-
+		
 		List<ResumoContratosDto> lista = new ArrayList<ResumoContratosDto>();
 		int quantidadeTodos = (int) totalContratos();
 
 		regraRepository.findAll().forEach(regra -> {
 			try {
-				Method metodo = contratoRepository.getClass().getMethod(regra.getMethod());
-				int quantidade = ((List<Contrato>) metodo.invoke(contratoRepository)).size();
-				long percentual = (quantidade > 0 ? Math.round((float) quantidade / quantidadeTodos * 100) : 0);
-				ResumoContratosDto resumo = new ResumoContratosDto(regra, quantidade, percentual);
-				lista.add(resumo);
+				Method metodo = contratoRepository.getClass().getMethod(regra.getMethod(), long.class);
+				int quantidade = ((List<Contrato>) metodo.invoke(contratoRepository, idUnidade)).size();
+				if(quantidade > 0) {
+					long percentual = (quantidade > 0 ? Math.round((float) quantidade / quantidadeTodos * 100) : 0);
+					ResumoContratosDto resumo = new ResumoContratosDto(regra, quantidade, percentual);
+					lista.add(resumo);					
+				}
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
 
@@ -111,7 +132,11 @@ public class ContratoService {
 		return lista;
 	}
 
-	private Contrato converterDtoParaContrato(ContratoLidoDto contratoLidoDto) {
+	public void saveContrato(ContratoDto contratoLido) {
+		contratoRepository.save(converterDtoParaContrato(contratoLido));
+	}
+
+	private Contrato converterDtoParaContrato(ContratoDto contratoLidoDto) {
 
 		Contrato novoContrato;
 
@@ -126,8 +151,8 @@ public class ContratoService {
 			novoContrato = new Contrato();
 		}
 
-		novoContrato.setNumeroOperacao(Integer.parseInt(contratoLidoDto.numeroOperacao));
-		novoContrato.setDvOperacao(Integer.parseInt(contratoLidoDto.dvOperacao));
+		novoContrato.setNumeroOperacao(ConverterHelper.valorLong(contratoLidoDto.numeroOperacao));
+		novoContrato.setDvOperacao(ConverterHelper.integer(contratoLidoDto.dvOperacao));
 		novoContrato.setNumeroSiconv(ConverterHelper.valorLong(contratoLidoDto.numeroSiconv));
 		novoContrato.setNumeroPropostaSiconv(ConverterHelper.valorLong(contratoLidoDto.numeroPropostaSiconv));
 		novoContrato.setTipoProjeto(contratoLidoDto.tipoProjeto);
@@ -238,7 +263,7 @@ public class ContratoService {
 		novoContrato.setDiasRestantesParalisacao(ConverterHelper.integer(contratoLidoDto.diasRestantesParalisacao));
 		novoContrato.setPendente(false);
 
-		novoContrato.setUnidadeCaixa(unidadeCaixaService.getunidadeCaixa(contratoLidoDto.unidadeCaixa));
+		novoContrato.setUnidadeCaixa(unidadeCaixaService.getUnidadeCaixa(contratoLidoDto.unidadeCaixa));
 
 		novoContrato.setEmpreendimento(empreendimentoService.getempreendimento(contratoLidoDto.empreendimento,
 				contratoLidoDto.objetoEmpreendimento, contratoLidoDto.localidadeEmpreendimento,
@@ -291,7 +316,7 @@ public class ContratoService {
 		Regra regraSemDesbloqueioAguardandoProcessoLicitatorio = new Regra();
 		regraSemDesbloqueioAguardandoProcessoLicitatorio.setNome("SEM_DESBLOQUEIO_AGUARDANDO_PROCESSO_LICITATORIO");
 		regraSemDesbloqueioAguardandoProcessoLicitatorio
-				.setDescricao("Sem desbloqueio, aguardando Processo Licitatório");
+				.setDescricao("Aguard. Processo Licitatório");
 		regraSemDesbloqueioAguardandoProcessoLicitatorio
 				.setMethod("contratosSemDesbloqueioAguardandoProcessoLicitatorio");
 		regraSemDesbloqueioAguardandoProcessoLicitatorio.setUrl("semdesbloqueioaguardandolicitatorio");
@@ -299,7 +324,7 @@ public class ContratoService {
 		// 4
 		Regra regraSemDesbloqueioAguardandoCreditoRecurso = new Regra();
 		regraSemDesbloqueioAguardandoCreditoRecurso.setNome("SEM_DESBLOQUEIO_AGUARDANDO_CREDITO_RECURSO");
-		regraSemDesbloqueioAguardandoCreditoRecurso.setDescricao("Sem desbloqueio, aguardando Crédito de Recusos");
+		regraSemDesbloqueioAguardandoCreditoRecurso.setDescricao("Aguard. Crédito de Recusos");
 		regraSemDesbloqueioAguardandoCreditoRecurso.setMethod("contratosSemDesbloqueioAguardandoCreditoRecurso");
 		regraSemDesbloqueioAguardandoCreditoRecurso.setUrl("semdesbloqueioaguardandocreditorecurso");
 		regraRepository.save(regraSemDesbloqueioAguardandoCreditoRecurso);
@@ -348,7 +373,7 @@ public class ContratoService {
 		// 11
 		Regra regraCrCelebradoComInadimplencia = new Regra();
 		regraCrCelebradoComInadimplencia.setNome("CR_CELEBRADO_COM_INADIMPLENCIA");
-		regraCrCelebradoComInadimplencia.setDescricao("CR Celebrado com inadimplência");
+		regraCrCelebradoComInadimplencia.setDescricao("CR Celebrado c/ inadimplência");
 		regraCrCelebradoComInadimplencia.setMethod("contratosCrCelebradoComInadimplencia");
 		regraCrCelebradoComInadimplencia.setUrl("crcelebradocominadimplencia");
 		regraRepository.save(regraCrCelebradoComInadimplencia);
@@ -379,7 +404,7 @@ public class ContratoService {
 		Regra regraTodos = new Regra();
 		regraTodos.setNome("TODOS");
 		regraTodos.setDescricao("Todos os contratos");
-		regraTodos.setMethod("findAll");
+		regraTodos.setMethod("todosContratosPorUnidade");
 		regraTodos.setUrl("todos");
 		regraRepository.save(regraTodos);
 	}
