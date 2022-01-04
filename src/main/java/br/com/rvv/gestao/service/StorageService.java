@@ -11,23 +11,28 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class StorageService  {
 
-	private String diretorio = "c:\\temp\\arquivos-caixa\\";
+	private String diretorio = "c:\\temp\\arquivos-temp\\";
 	
-	public String salvarArquivo(MultipartFile arquivo) {
-		return this.salvar(diretorio, arquivo);		
+	public String saveFile(MultipartFile arquivo) throws IOException {		
+		return this.save(diretorio, arquivo);		
 	}
 
-	private String salvar(String diretorio, MultipartFile arquivo) {
-		Path diretorioPath = Paths.get(diretorio);
-		Path arquivoPath = diretorioPath.resolve(arquivo.getOriginalFilename());
+	private String save(String diretorio, MultipartFile arquivo) throws IOException {
 		
 		try {
+			if (arquivo == null) {
+				throw new IOException("Você não informou um arquivo, repita o processo!");
+			}
+			Path diretorioPath = Paths.get(diretorio);
+			Path arquivoPath = diretorioPath.resolve(arquivo.getOriginalFilename());
+			
 			Files.createDirectories(diretorioPath);
 			arquivo.transferTo(arquivoPath.toFile());
 			
 			return arquivoPath.toString();
+			
 		} catch (IOException e) {
-			return "null";
+			throw new IOException("Erro ao ler o arquivo informado!");
 		}
 		
 	}

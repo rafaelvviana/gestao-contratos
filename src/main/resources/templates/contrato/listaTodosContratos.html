@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head th:replace="~{base :: head}"></head>
+	
+<body>
+	
+	<div th:replace="~{base :: menu}"></div>
+	
+	<div >
+		<div>
+			<h3 class="mx-4 font-weight-bold text-primary">Operações: <span th:text="${nomeLista}">tipo da lista</span></h3>			
+		</div>
+			
+		<div class="mx-2" id="listaContratos">
+				
+			<table class="table table-striped table-sm table-bordered table-hover">
+				<thead>
+					<th class="text-center" width="8%">Operação</th>						
+					<th class="text-center" width="8%">Siconv</th>
+					<th class="text-center" >Tomador</th>
+					<th class="text-center" >Programa</th>
+					<th class="text-center" >Objeto</th>
+					<th></th>
+				</thead>
+				<tbody>
+					<th:block th:each="contrato: ${listaContratos}">						
+						<tr>
+							<td class="text-center">
+								<span th:text="${contrato.numeroOperacao}"></span>
+								<span>-</span>
+								<span th:text="${contrato.dvOperacao}"></span>
+							</td>
+							<td class="text-center" th:text="${contrato.numeroSiconv}"></td>
+							<td th:text="${contrato.tomadorOperacao.nome}"></td>
+							<td th:text="${contrato.empreendimento.programa.nome}"></td>
+							<td th:text="${contrato.empreendimento.objeto}"></td>
+							<td><a th:href="@{'/contratos/detalhes/' + ${contrato.id}}">							
+							 		<i class="fa fa-table"></i>
+							 	</a>									
+							</td>
+						</tr>						
+					</th:block>
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+
+	
+	<div th:replace="~{base :: scripts}"></div>
+
+</body>
+
+<footer th:replace="~{base :: footer}"></footer>
+
+</html>

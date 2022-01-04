@@ -7,51 +7,73 @@
 	<div th:replace="~{base :: menu}"></div>
 	
 	<div class="container">
-		<h1>Bem Vindos!</h1>
-		
-		<div class="row row-cols-1 row-cols-md-2 g-4">
-		  <div class="col">
-		    <div class="card">
-		      <img src="..." class="card-img-top" alt="...">
-		      <div class="card-body">
-		        <h5 class="card-title">Card title</h5>
-		        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-		      </div>
-		    </div>
-		  </div>
-		  <div class="col">
-		    <div class="card">
-		      <img src="..." class="card-img-top" alt="...">
-		      <div class="card-body">
-		        <h5 class="card-title">Card title</h5>
-		        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-		      </div>
-		    </div>
-		  </div>
-		  <div class="col">
-		    <div class="card">
-		      <img src="..." class="card-img-top" alt="...">
-		      <div class="card-body">
-		        <h5 class="card-title">Card title</h5>
-		        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
-		      </div>
-		    </div>
-		  </div>
-		  <div class="col">
-		    <div class="card">
-		      <img src="..." class="card-img-top" alt="...">
-		      <div class="card-body">
-		        <h5 class="card-title">Card title</h5>
-		        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-		      </div>
-		    </div>
-		  </div>
+		<div class="row">
+			<div class="py-3">
+				<h3 class="m-0 font-weight-bold text-primary">Plano de Voo</h3>
+			</div>
+		</div>
+		<!-- DEMANDAS -->
+		<div class="row">
+			<div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                	<a th:attr="href=${resumoDemandas.quantidade > 0 ? '/demandas/' : '/'} + ${unidadeSelecionada.id}">
+                		<div class="row no-gutters align-items-center">
+		                 <div class="col mr-2">
+		                 	<div class="text-xs font-weight-bold text-primary text-uppercase mb-1" th:text="${resumoDemandas.nome}">Earnings (Monthly)</div>
+		                 	<div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${resumoDemandas.quantidade}">$40</div>
+		                 </div>
+		                 <div class="col-auto">
+		                   		<i class="fas fa-calendar fa-2x text-gray-300"></i>
+		                 </div>
+		               </div>
+		            </a>  
+                </div>
+              </div>
+            </div>
+		</div>
+		<!-- CONTRATOS -->
+		<div class="row">
+            <div class="col-xl-3 col-md-6 mb-4" th:each="resumo : ${resumos}">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                	<a th:href="@{'/contratos/' + ${unidadeSelecionada.id} + '/' + ${resumo.regra.url}}">
+		               <div class="row no-gutters align-items-center">
+		                 <div class="col mr-2">
+		                 	<div class="text-xs font-weight-bold text-primary text-uppercase mb-1" th:text="${resumo.regra.descricao}">Earnings (Monthly)</div>
+		                 	<div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${resumo.quantidade}">$40</div>
+		                 </div>
+		                 <div class="col-auto">
+		                   		<i class="fas fa-calendar fa-2x text-gray-300"></i>
+		                 </div>
+		               </div>
+		            </a>  
+                </div>
+              </div>
+            </div>            
+        </div>
+    
+        <div class="row card border-left-success">
+			<div class="card-header">
+		    	Últimas atualizações:
+		  	</div>
+		  	<div class="card-body">
+		  		<div class="row">
+		  			<th:block th:each="uploadLog: ${listaUploadLog}">
+		  				<div class="col">
+			  				<form class="form-floating">
+								<input readonly type="text" class="form-control" id="upload" th:value="${#temporals.format(uploadLog.data, 'dd/MM/yyyy HH:mm:ss')}">
+								<label for="upload" th:text="${uploadLog.tipo}">Tipo Upload</label>				
+							</form>
+						</div>					    
+		  			</th:block>			    
+		  		</div>
+			</div>
 		</div>
 	</div>
-
 	
 	<div th:replace="~{base :: scripts}"></div>
-
+	
 </body>
 
 <footer th:replace="~{base :: footer}"></footer>

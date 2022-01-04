@@ -1,0 +1,28 @@
+.fundo-azul {
+	background-color: #47bcff;
+	color: #FFF;
+}
+
+.cabecalho-azul {
+	background-color: #3FBFBF;
+}
+
+.logo-font {
+	font-family: 'Handlee', cursive;			
+}
+.logo-size {
+	font-size: 1.5rem;
+	text-decoration:none;
+	color: #FFF;
+}
+.footer-container {
+	background-color: gray;
+	color: #FFF;
+}
+footer {
+    text-align: center;
+    padding: 40px 0;
+}
+.form-control:disabled, .form-control[readonly] {
+	background-color: white;
+}

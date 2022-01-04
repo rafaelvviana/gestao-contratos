@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head th:replace="~{base :: head}"></head>
+	
+<body>
+	
+	<div th:replace="~{base :: menu}"></div>
+	
+	<div >
+		<div>
+			<h3 class="mx-4 font-weight-bold text-primary">Demandas</h3>			
+		</div>
+			
+		<div class="mx-2" id="listaDemandas">
+				
+			<table class="table table-striped table-sm table-bordered table-hover">
+				<thead>
+					<th class="text-center" width="8%">Situação</th>
+					<th class="text-center">Respons.</th>
+					<th class="text-center" width="15%" >Operação</th>
+					<th class="text-center" width="8%">Protocolo</th>
+					<th class="text-center" width="8%">Dt. Entrada</th>
+					<th class="text-center" width="8%">Dt. Encam.</th>
+					<th class="text-center">Prazo Total</th>
+					<th class="text-center">Tipo</th>
+					<th class="text-center">SubTipo</th>
+					<th class="text-center">Ext/Int.</th>
+					
+				</thead>
+				<tbody>
+					<th:block th:each="demanda: ${listaDemandas}">
+						<tr>
+							<td th:text="${demanda.situacao}"></td>
+							<td th:text="${demanda.responsavel}"></td>
+							<td class="text-center" width="8%">
+								<span th:if="${demanda.contrato}">
+									<span th:text="${demanda.contrato.numeroOperacao}"></span>-
+									<span th:text="${demanda.contrato.dvOperacao}"></span>
+								</span>
+								<span th:unless="${demanda.contrato}">
+									<span>-</span>
+								</span>
+							</td>
+							<td class="text-center" th:text="${demanda.protocolo}"></td>
+							<td th:text="${demanda.dataEntrada}"></td>
+							<td th:text="${demanda.dataEncaminhamento}"></td>
+							<td class="text-center" th:text="${demanda.prazoTotal}"></td>
+							<td th:text="${demanda.tipoDemanda}"></td>
+							<td th:text="${demanda.subTipoDemanda}"></td>
+							<td th:text="${demanda.externo}"></td>
+						</tr>						
+					</th:block>
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+
+	
+	<div th:replace="~{base :: scripts}"></div>
+
+</body>
+
+<footer th:replace="~{base :: footer}"></footer>
+
+</html>
